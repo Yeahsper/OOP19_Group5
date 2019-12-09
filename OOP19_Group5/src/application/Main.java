@@ -1,4 +1,5 @@
-import application.Skier;
+package application;
+	
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -6,6 +7,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -50,13 +52,17 @@ public class Main extends Application {
 			Button btnSearchName = new Button("Search");
 			Button btnSearchStartNumber = new Button("Search");
 			Button btnUpdate = new Button("Add and refresh list");
+			Button btnStartRace = new Button("Start race");
+			Button btnHunt = new Button("Hunt");
+			Button btnIndividual15 = new Button("Mass");
+			Button btnIndividual30 = new Button("30 sek");
 
 			// Layout
 			BorderPane root = new BorderPane();
 			VBox vBoxRight = new VBox();
 			GridPane gridPane = new GridPane();
 			gridPane.setPadding(new Insets(10, 10, 10, 10));
-			gridPane.setVgap(30);
+			gridPane.setVgap(30  );
 			gridPane.setHgap(5);
 
 			// Name and time current skier
@@ -90,10 +96,22 @@ public class Main extends Application {
 			lblDifference.setText("00:00:00");
 			GridPane.setConstraints(lblDifference, 0, 5);
 
-			gridPane.getChildren().addAll(lblNameCurrentSkier, lblTimeCurrentSkier, btnSearchName, nameInput, btnSearchStartNumber, startNumberInput, btnUpdate, lblNrCurrentLeader, lblDifference);
+			// RaceSettings
+            GridPane.setConstraints(btnStartRace, 0, 6);
+            Label lblTypeOfRace = new Label("Select type of start");
+            GridPane.setConstraints(lblTypeOfRace, 0, 7);
+
+
+			gridPane.getChildren().addAll(lblNameCurrentSkier, lblTimeCurrentSkier, btnSearchName, nameInput, btnSearchStartNumber, startNumberInput,
+                    btnUpdate, lblNrCurrentLeader, lblDifference, btnStartRace, lblTypeOfRace);
+
+            HBox hBox = new HBox();
+            hBox.setPadding(new Insets(10, 10, 10, 10));
+            hBox.setSpacing(20);
+            hBox.getChildren().addAll(btnHunt, btnIndividual15, btnIndividual30);
 
 			vBoxRight.setPadding(new Insets(10, 10, 10,10));
-			vBoxRight.getChildren().addAll(gridPane);
+			vBoxRight.getChildren().addAll(gridPane, hBox);
 
 			root.setLeft(table);
 			root.setRight(vBoxRight);
@@ -114,7 +132,7 @@ public class Main extends Application {
 	}
 	public ObservableList<Skier> getSkier() {
 		ObservableList<Skier> skiers = FXCollections.observableArrayList();
-		skiers.add(new application.Skier("Gunde", "Svan", 1));
+		skiers.add(new Skier("Gunde", "Svan", 1));
 		skiers.add(new Skier("Dimitri", "Youshenko", 2));
 		skiers.add(new Skier("Lucas", "Bauer", 3));
 		return skiers;
