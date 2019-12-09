@@ -1,5 +1,4 @@
-package application;
-	
+import application.Skier;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -115,7 +114,7 @@ public class Main extends Application {
 	}
 	public ObservableList<Skier> getSkier() {
 		ObservableList<Skier> skiers = FXCollections.observableArrayList();
-		skiers.add(new Skier("Gunde", "Svan", 1));
+		skiers.add(new application.Skier("Gunde", "Svan", 1));
 		skiers.add(new Skier("Dimitri", "Youshenko", 2));
 		skiers.add(new Skier("Lucas", "Bauer", 3));
 		return skiers;
