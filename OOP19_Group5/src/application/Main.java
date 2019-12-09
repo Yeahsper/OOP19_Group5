@@ -12,7 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-
+//kkjj
 public class Main extends Application {
 	TableView <Skier> table;
 	TextField nameInput, startNumberInput;
