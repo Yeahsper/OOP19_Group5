@@ -23,7 +23,7 @@ public class MyXMLcoder {
 	}
 	
 	//--Methods--
-	public void encode(List<Skier> arrList) {
+	public void encode(ArrayList<Skier> arrList) {
 		XMLEncoder encoder=null;
 		try{
 			encoder=new XMLEncoder(new BufferedOutputStream(new FileOutputStream("ContactBook.xml")));
