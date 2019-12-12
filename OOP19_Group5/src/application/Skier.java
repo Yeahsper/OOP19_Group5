@@ -4,7 +4,7 @@ public class Skier {
 
 	private String firstName;
 	private String lastName;
-	private String fullName = firstName+" "+lastName;
+	private String fullName;
 	private int startNumber;
 	
 	public Skier() {
@@ -13,6 +13,15 @@ public class Skier {
 
 	
 	
+	public Skier(String firstName, String lastName, int startNumber) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.startNumber = startNumber;
+	}
+
+
+
 	public Skier(String firstName, String lastName, String fullName, int startNumber) {
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -38,9 +47,10 @@ public class Skier {
 		this.lastName = lastName;
 	}
 
-	public String getFullName() {
-		return fullName;
-	}
+    public  String getFullName() {
+        fullName = firstName.concat(" ").concat(lastName);
+        return fullName;
+    }
 
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
