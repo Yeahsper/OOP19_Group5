@@ -6,6 +6,7 @@ public class Skier {
 	private String lastName;
 	private String fullName;
 	private int startNumber;
+	private AniTimer timer;
 	
 	public Skier() {
 		
@@ -13,6 +14,14 @@ public class Skier {
 
 	
 	
+	public Skier(String fullName, int startNumber) {
+		super();
+		this.fullName = fullName;
+		this.startNumber = startNumber;
+	}
+
+
+
 	public Skier(String firstName, String lastName, int startNumber) {
 		super();
 		this.firstName = firstName;
@@ -47,10 +56,13 @@ public class Skier {
 		this.lastName = lastName;
 	}
 
-    public  String getFullName() {
-        fullName = firstName.concat(" ").concat(lastName);
-        return fullName;
-    }
+
+
+	public String getFullName() {
+		return fullName;
+	}
+
+
 
 	public void setFullName(String fullName) {
 		this.fullName = fullName;

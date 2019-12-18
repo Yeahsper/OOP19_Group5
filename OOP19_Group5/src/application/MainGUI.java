@@ -1,5 +1,8 @@
 package application;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -18,21 +21,25 @@ import javafx.stage.Stage;
 
 public class MainGUI {
 
-	TableView <Skier> table;
+	TableView <Skier> table = new TableView<>();
+	List<Skier> arrList = new ArrayList<Skier>();
+	ObservableList<Skier> obList = FXCollections.observableList(arrList);
+	Skier skier;
 	TextField nameInput, startNumberInput;
+	MyButton myButton = new MyButton();
 	boolean running;
 
 	Label lblDifference = new Label();
 	AniTimer timer = new AniTimer(lblDifference);
 
 	public MainGUI() {
-		
+
 	}
-	
-	
+
+
 	public void display() {
 		Stage primaryStage = new Stage();
-		
+
 		try {
 			/** Kolumner **/
 			// NamnKolumn
@@ -48,10 +55,9 @@ public class MainGUI {
 			// Differens
 			TableColumn<Skier, Integer> differenceColumn = new TableColumn<>("Difference");
 			differenceColumn.setMinWidth(170);
-			differenceColumn.setCellValueFactory(new PropertyValueFactory<>("startNumber"));
+			differenceColumn.setCellValueFactory(new PropertyValueFactory<>("startnumber"));
 
-			table = new TableView<>();
-			table.setItems(getSkier());
+			
 			table.getColumns().addAll(fullNameColumn, startNumberColumn, differenceColumn);
 
 			nameInput = new TextField();
@@ -63,10 +69,21 @@ public class MainGUI {
 			startNumberInput.setMaxWidth(170);
 
 			// Knappar
-			Button btnSearchName = new Button("Search");
-			Button btnSearchStartNumber = new Button("Search");
-			Button btnUpdate = new Button("Add and refresh list");
+			Button btnAdd = new Button("Add skier");
+			btnAdd.setOnAction(e->{
+				myButton.add(table, obList, nameInput, startNumberInput);
+			});
+				
+			Button btnDelete = new Button("Delete skier");
+			btnDelete.setOnAction(e->{
+				myButton.delete(table);
+			});
+			
+			
+
+			
 			Button btnStartRace = new Button("Start race");
+			Button btnSave = new Button("Save list");
 
 			btnStartRace.setOnAction(e->{
 				if(!running) {
@@ -89,6 +106,10 @@ public class MainGUI {
 			Button btnIndividual15 = new Button("Mass");
 			Button btnIndividual30 = new Button("30 sek");
 
+			// Labels
+			Label lblName = new Label("Name");
+			Label lblNumber = new Label("Number");
+
 			// Layout
 			BorderPane root = new BorderPane();
 			VBox vBoxRight = new VBox();
@@ -102,20 +123,23 @@ public class MainGUI {
 			lblNameCurrentSkier.setStyle("-fx-font-size: 18");
 			lblNameCurrentSkier.setText("Gunde Svan");
 			GridPane.setConstraints(lblNameCurrentSkier, 0, 0);
-			
+
 			Label lblTimeCurrentSkier = new Label();
 			lblTimeCurrentSkier.setStyle("-fx-font-size: 18");
 			lblTimeCurrentSkier.setText("00:00:00");
 			GridPane.setConstraints(lblTimeCurrentSkier, 1, 0);
 
 			// Search skier
-			GridPane.setConstraints(btnSearchName, 0, 1);
-			GridPane.setConstraints(btnSearchStartNumber, 0, 2);
+			GridPane.setConstraints(lblName, 0, 1);
+			GridPane.setConstraints(lblNumber, 0, 2);
 			GridPane.setConstraints(nameInput, 1, 1);
 			GridPane.setConstraints(startNumberInput, 1, 2);
 
-			// Update
-			GridPane.setConstraints(btnUpdate, 0, 3);
+			// Add Skier
+			GridPane.setConstraints(btnAdd, 0, 3);
+			
+			// Delete Skier
+			GridPane.setConstraints(btnDelete, 1, 3);
 
 			// Show leader
 			Label lblNrCurrentLeader = new Label();
@@ -134,9 +158,12 @@ public class MainGUI {
 			Label lblTypeOfRace = new Label("Select type of start");
 			GridPane.setConstraints(lblTypeOfRace, 0, 7);
 
+			// Save result
+			GridPane.setConstraints(btnSave, 1, 6);
 
-			gridPane.getChildren().addAll(lblNameCurrentSkier, lblTimeCurrentSkier, btnSearchName, nameInput, btnSearchStartNumber, startNumberInput,
-					btnUpdate, lblNrCurrentLeader, lblDifference, btnStartRace, lblTypeOfRace);
+
+			gridPane.getChildren().addAll(lblNameCurrentSkier, lblTimeCurrentSkier, lblName, nameInput, lblNumber, startNumberInput,
+					btnAdd, lblNrCurrentLeader, lblDifference, btnStartRace, lblTypeOfRace, btnSave, btnDelete);
 
 			HBox hBox = new HBox();
 			hBox.setPadding(new Insets(10, 10, 10, 10));
@@ -149,10 +176,11 @@ public class MainGUI {
 			root.setLeft(table);
 			root.setRight(vBoxRight);
 
-			Scene scene = new Scene(root,800,900);
+			Scene scene = new Scene(root);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("Russian EPOGenerator");
+			primaryStage.setResizable(false);
 			primaryStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -160,12 +188,5 @@ public class MainGUI {
 
 	}
 
-	public ObservableList<Skier> getSkier() {
-		ObservableList<Skier> skiers = FXCollections.observableArrayList();
-		skiers.add(new Skier("Gunde", "Svan", 1));
-		skiers.add(new Skier("Dimitri", "Youshenko", 2));
-		skiers.add(new Skier("Lucas", "Bauer", 3));
-		return skiers;
-	}
 
 }
