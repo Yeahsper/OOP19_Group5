@@ -73,12 +73,7 @@ public class MainGUI {
 			btnAdd.setOnAction(e->{
 				myButton.add(table, obList, nameInput, startNumberInput);
 			});
-			
-			Button btnUpdate = new Button("Update skier");
-			btnUpdate.setOnAction(e->{
-				myButton.update(table, nameInput, startNumberInput);
-			});
-			
+				
 			Button btnDelete = new Button("Delete skier");
 			btnDelete.setOnAction(e->{
 				myButton.delete(table);
@@ -143,9 +138,6 @@ public class MainGUI {
 			// Add Skier
 			GridPane.setConstraints(btnAdd, 0, 3);
 			
-			// Update Skier
-			GridPane.setConstraints(btnUpdate, 2, 3);
-			
 			// Delete Skier
 			GridPane.setConstraints(btnDelete, 1, 3);
 
@@ -171,7 +163,7 @@ public class MainGUI {
 
 
 			gridPane.getChildren().addAll(lblNameCurrentSkier, lblTimeCurrentSkier, lblName, nameInput, lblNumber, startNumberInput,
-					btnAdd, lblNrCurrentLeader, lblDifference, btnStartRace, lblTypeOfRace, btnSave, btnDelete, btnUpdate);
+					btnAdd, lblNrCurrentLeader, lblDifference, btnStartRace, lblTypeOfRace, btnSave, btnDelete);
 
 			HBox hBox = new HBox();
 			hBox.setPadding(new Insets(10, 10, 10, 10));
@@ -184,10 +176,11 @@ public class MainGUI {
 			root.setLeft(table);
 			root.setRight(vBoxRight);
 
-			Scene scene = new Scene(root,800,900);
+			Scene scene = new Scene(root);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("Russian EPOGenerator");
+			primaryStage.setResizable(false);
 			primaryStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();
