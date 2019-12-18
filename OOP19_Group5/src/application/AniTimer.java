@@ -50,14 +50,13 @@ public class AniTimer extends AnimationTimer {
 		}
 	}
 	
+	
     public void reset() {
         time = 0;
     }
 	
 	
 	//-- Getters & setters --
-	
-	
 	public long getTimestamp() {
 		return timestamp;
 	}

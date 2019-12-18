@@ -102,10 +102,10 @@ public class MainGUI {
 			lblNameCurrentSkier.setStyle("-fx-font-size: 18");
 			lblNameCurrentSkier.setText("Gunde Svan");
 			GridPane.setConstraints(lblNameCurrentSkier, 0, 0);
+			
 			Label lblTimeCurrentSkier = new Label();
 			lblTimeCurrentSkier.setStyle("-fx-font-size: 18");
 			lblTimeCurrentSkier.setText("00:00:00");
-
 			GridPane.setConstraints(lblTimeCurrentSkier, 1, 0);
 
 			// Search skier
