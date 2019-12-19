@@ -24,9 +24,9 @@ public class MainGUI {
 	TableView <Skier> table = new TableView<>();
 	List<Skier> arrList = new ArrayList<Skier>();
 	ObservableList<Skier> obList = FXCollections.observableList(arrList);
-	Skier skier;
+	Skier skier = new Skier();
 	TextField nameInput, startNumberInput;
-	MyButton myButton = new MyButton();
+	Controller myButton = new Controller();
 	boolean running;
 
 	Label lblDifference = new Label();
@@ -53,37 +53,49 @@ public class MainGUI {
 			startNumberColumn.setCellValueFactory(new PropertyValueFactory<>("startNumber"));
 
 			// Differens
-			TableColumn<Skier, Integer> differenceColumn = new TableColumn<>("Difference");
-			differenceColumn.setMinWidth(170);
-			differenceColumn.setCellValueFactory(new PropertyValueFactory<>("startnumber"));
+			TableColumn<Skier, Skier> timeColumn = new TableColumn<>("Time");
+			timeColumn.setMinWidth(170);
+			timeColumn.setCellValueFactory(new PropertyValueFactory<>("time"));
 
-			
-			table.getColumns().addAll(fullNameColumn, startNumberColumn, differenceColumn);
+
+			table.getColumns().addAll(fullNameColumn, startNumberColumn, timeColumn);
 
 			nameInput = new TextField();
 			nameInput.setPromptText("Name");
-			nameInput.setMaxWidth(170);
+			nameInput.setMinWidth(250);
 
 			startNumberInput = new TextField();
 			startNumberInput.setPromptText("Startnumber");
-			startNumberInput.setMaxWidth(170);
+			startNumberInput.setMaxWidth(50);
 
 			// Knappar
 			Button btnAdd = new Button("Add skier");
 			btnAdd.setOnAction(e->{
 				myButton.add(table, obList, nameInput, startNumberInput);
 			});
-				
+
 			Button btnDelete = new Button("Delete skier");
 			btnDelete.setOnAction(e->{
-				myButton.delete(table);
+				myButton.delete(table, obList, startNumberInput);
 			});
-			
-			
 
-			
+			Button btnGoal = new Button("Finish");
+			btnGoal.setMinWidth(100);
+			btnGoal.setOnAction(e->{
+				myButton.goal(table, obList, timer.getTime());
+			});
+
 			Button btnStartRace = new Button("Start race");
+			btnStartRace.setMinWidth(100);
+
 			Button btnSave = new Button("Save list");
+			btnSave.setMinWidth(100);
+			btnSave.setOnAction(e -> {
+				ArrayList<Skier> arrlist = new ArrayList<>(table.getItems());
+				Serialization serialization = new Serialization();
+				serialization.serialize((ArrayList<Skier>) arrList, "./skiers.xml");
+
+			});
 
 			btnStartRace.setOnAction(e->{
 				if(!running) {
@@ -98,9 +110,15 @@ public class MainGUI {
 					running = false;
 
 				}
+			});
 
-
-
+			Button btnGetList = new Button("Get list");
+			btnGetList.setMinWidth(100);
+			btnGetList.setOnAction(e -> {
+				Serialization deserialization = new Serialization();
+				arrList = deserialization.deserialize((ArrayList<Skier>) arrList, "./skiers.xml");
+				ObservableList<Skier> obList = FXCollections.observableList(arrList);
+				table.getItems().addAll(obList);
 			});
 			Button btnHunt = new Button("Hunt");
 			Button btnIndividual15 = new Button("Mass");
@@ -115,19 +133,10 @@ public class MainGUI {
 			VBox vBoxRight = new VBox();
 			GridPane gridPane = new GridPane();
 			gridPane.setPadding(new Insets(10, 10, 10, 10));
-			gridPane.setVgap(30  );
+			gridPane.setVgap(30);
 			gridPane.setHgap(5);
 
 			// Name and time current skier
-			Label lblNameCurrentSkier = new Label();
-			lblNameCurrentSkier.setStyle("-fx-font-size: 18");
-			lblNameCurrentSkier.setText("Gunde Svan");
-			GridPane.setConstraints(lblNameCurrentSkier, 0, 0);
-
-			Label lblTimeCurrentSkier = new Label();
-			lblTimeCurrentSkier.setStyle("-fx-font-size: 18");
-			lblTimeCurrentSkier.setText("00:00:00");
-			GridPane.setConstraints(lblTimeCurrentSkier, 1, 0);
 
 			// Search skier
 			GridPane.setConstraints(lblName, 0, 1);
@@ -137,7 +146,7 @@ public class MainGUI {
 
 			// Add Skier
 			GridPane.setConstraints(btnAdd, 0, 3);
-			
+
 			// Delete Skier
 			GridPane.setConstraints(btnDelete, 1, 3);
 
@@ -149,29 +158,61 @@ public class MainGUI {
 
 			// Show difference to leader
 
-			lblDifference.setStyle("-fx-font-size: 40");
-			lblDifference.setText("00:00:00");
+			lblDifference.setStyle("-fx-font-size: 30");
+			lblDifference.setText("00:00.000");
 			GridPane.setConstraints(lblDifference, 0, 5);
 
 			// RaceSettings
-			GridPane.setConstraints(btnStartRace, 0, 6);
+
 			Label lblTypeOfRace = new Label("Select type of start");
-			GridPane.setConstraints(lblTypeOfRace, 0, 7);
 
+			Label lblChosenskier = new Label("Gunde Svan");
+			lblChosenskier.setStyle("-fx-font-size: 20");
+			Label lblTime = new Label("00:00.000");
+			lblTime.setStyle("-fx-font-size: 30");
 			// Save result
-			GridPane.setConstraints(btnSave, 1, 6);
 
 
-			gridPane.getChildren().addAll(lblNameCurrentSkier, lblTimeCurrentSkier, lblName, nameInput, lblNumber, startNumberInput,
-					btnAdd, lblNrCurrentLeader, lblDifference, btnStartRace, lblTypeOfRace, btnSave, btnDelete);
+			//Get resultlist/Startlist
+			gridPane.getChildren().addAll(lblName, nameInput, lblNumber, startNumberInput);
 
 			HBox hBox = new HBox();
-			hBox.setPadding(new Insets(10, 10, 10, 10));
+			hBox.setPadding(new Insets(10, 10, 10, 5));
 			hBox.setSpacing(20);
-			hBox.getChildren().addAll(btnHunt, btnIndividual15, btnIndividual30);
+			hBox.getChildren().addAll(btnStartRace, btnGoal);
 
-			vBoxRight.setPadding(new Insets(10, 10, 10,10));
-			vBoxRight.getChildren().addAll(gridPane, hBox);
+			HBox hBox2 = new HBox();
+			hBox2.setPadding(new Insets(10, 10, 10, 5));
+			hBox2.setSpacing(20);
+			hBox2.getChildren().addAll(btnHunt, btnIndividual15, btnIndividual30);
+
+			HBox hBox3 = new HBox();
+			hBox3.setPadding(new Insets(10, 10, 10, 5));
+			hBox3.setSpacing(20);
+			hBox3.getChildren().addAll(lblNrCurrentLeader, lblDifference);
+
+			HBox hBox6 = new HBox();
+			hBox6.setPadding(new Insets(10, 10, 10, 5));
+			hBox6.setSpacing(20);
+			hBox6.getChildren().addAll(lblChosenskier, lblTime);
+
+			HBox hBox4 = new HBox();
+			hBox4.setPadding(new Insets(10, 10, 10, 5));
+			hBox4.setSpacing(20);
+			hBox4.getChildren().addAll(lblTypeOfRace);
+
+			HBox hBox5 = new HBox();
+			hBox5.setPadding(new Insets(10, 10, 10, 5));
+			hBox5.setSpacing(20);
+			hBox5.getChildren().addAll(btnAdd, btnDelete);
+
+			VBox vBox2 = new VBox();
+			vBox2.setPadding(new Insets(10, 10, 10,5));
+			vBox2.getChildren().addAll(hBox5, hBox3, hBox6, hBox, hBox4, hBox2);
+
+
+			vBoxRight.setPadding(new Insets(10, 10, 10,5));
+			vBoxRight.getChildren().addAll(gridPane, vBox2);
 
 			root.setLeft(table);
 			root.setRight(vBoxRight);
@@ -179,7 +220,7 @@ public class MainGUI {
 			Scene scene = new Scene(root);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
-			primaryStage.setTitle("Russian EPOGenerator");
+			primaryStage.setTitle("Russian EPO-Meter");
 			primaryStage.setResizable(false);
 			primaryStage.show();
 		} catch(Exception e) {

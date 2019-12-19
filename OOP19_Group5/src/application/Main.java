@@ -25,3 +25,6 @@ public class Main extends Application {
 		launch(args);
 	}
 }
+
+
+//Tid-(startnummer*30) = enskild tid

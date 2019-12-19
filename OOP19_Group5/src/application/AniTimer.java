@@ -46,7 +46,7 @@ public class AniTimer extends AnimationTimer {
 		if (timestamp <= newTime) {
 			long deltaT = (newTime - timestamp);
 			time += deltaT;
-			timestamp += deltaT;
+			timestamp +=  deltaT;
 			labelTime.setText(timeFormat.format(time));
 		}
 	}
@@ -91,11 +91,15 @@ public class AniTimer extends AnimationTimer {
 		
 		return labelTime;
 	}
-	
-    public String getTime() {
-        SimpleDateFormat sdf = new SimpleDateFormat("mm:ss.S");
-        return sdf.format(time);
 
-    }
+	public long getTime() {
+		return time;
+	}
+
+	public void setTimeFormat(SimpleDateFormat timeFormat) {
+		this.timeFormat = timeFormat;
+	}
+	
+    
 	
 }

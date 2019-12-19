@@ -1,12 +1,13 @@
 package application;
 
+import java.text.SimpleDateFormat;
+
 public class Skier {
 
-	private String firstName;
-	private String lastName;
-	private String fullName;
+	private String name;
 	private int startNumber;
-	private AniTimer timer;
+	private long time;
+	private long differenceToFirst;
 	
 	public Skier() {
 		
@@ -16,56 +17,25 @@ public class Skier {
 	
 	public Skier(String fullName, int startNumber) {
 		super();
-		this.fullName = fullName;
+		this.name = fullName;
 		this.startNumber = startNumber;
 	}
-
-
-
-	public Skier(String firstName, String lastName, int startNumber) {
+	
+	public Skier(String name, int startNumber, long time) {
 		super();
-		this.firstName = firstName;
-		this.lastName = lastName;
+		this.name = name;
 		this.startNumber = startNumber;
-	}
-
-
-
-	public Skier(String firstName, String lastName, String fullName, int startNumber) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.fullName = fullName;
-		this.startNumber = startNumber;
-	}
-
-
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+		this.time = time;
 	}
 
 
 
 	public String getFullName() {
-		return fullName;
+		return name;
 	}
 
-
-
 	public void setFullName(String fullName) {
-		this.fullName = fullName;
+		this.name = fullName;
 	}
 
 	public int getStartNumber() {
@@ -75,6 +45,27 @@ public class Skier {
 	public void setStartNumber(int startNumber) {
 		this.startNumber = startNumber;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+    public String getTime() {
+        SimpleDateFormat sdf = new SimpleDateFormat("mm:ss.SSS");
+        return sdf.format(time);
+    }
+
+	public void setTime(long time) {
+		this.time = time;
+	}
 	
+    public String getDifferenceToFirst() {
+        SimpleDateFormat sdf = new SimpleDateFormat("mm:ss.SSS");
+        return sdf.format(time);
+    }
 	
 }
