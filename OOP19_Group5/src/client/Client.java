@@ -16,7 +16,6 @@ public class Client extends Application{
 
         @Override
         public void start(Stage primaryStage) {
-
             Button btnUpdate = new Button("Update");
             Button btnSearch = new Button("Search");
             startNumberInput = new TextField();

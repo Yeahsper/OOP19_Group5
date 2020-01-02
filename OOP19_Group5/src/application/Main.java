@@ -27,4 +27,4 @@ public class Main extends Application {
 }
 
 
-//Tid-(startnummer*30) = enskild tid
+//Tid-((startnummer-1)*30) = enskild tid

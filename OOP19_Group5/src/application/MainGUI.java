@@ -21,16 +21,21 @@ import javafx.stage.Stage;
 
 public class MainGUI {
 
-	TableView <Skier> table = new TableView<>();
+    TableView <Skier> table = new TableView<>();
 	List<Skier> arrList = new ArrayList<Skier>();
 	ObservableList<Skier> obList = FXCollections.observableList(arrList);
 	Skier skier = new Skier();
 	TextField nameInput, startNumberInput;
-	Controller myButton = new Controller();
+	Controller controller = new Controller();
+	Split split = new Split();
 	boolean running;
-
-	Label lblDifference = new Label();
-	AniTimer timer = new AniTimer(lblDifference);
+	Label lblNrCurrentLeader = new Label();
+	Label lblTimeSkier = new Label();
+	AniTimer timer = new AniTimer(lblTimeSkier);
+	int startnumber = 0;
+	long selectedStart = 0;
+	long raceTimer = 0;
+	long currentLeaderTime = 9999;
 
 	public MainGUI() {
 
@@ -53,9 +58,9 @@ public class MainGUI {
 			startNumberColumn.setCellValueFactory(new PropertyValueFactory<>("startNumber"));
 
 			// Differens
-			TableColumn<Skier, Skier> timeColumn = new TableColumn<>("Time");
+			TableColumn<Skier, String> timeColumn = new TableColumn<>("Time");
 			timeColumn.setMinWidth(170);
-			timeColumn.setCellValueFactory(new PropertyValueFactory<>("time"));
+			timeColumn.setCellValueFactory(new PropertyValueFactory<>("parsedTime"));
 
 
 			table.getColumns().addAll(fullNameColumn, startNumberColumn, timeColumn);
@@ -65,41 +70,81 @@ public class MainGUI {
 			nameInput.setMinWidth(250);
 
 			startNumberInput = new TextField();
-			startNumberInput.setPromptText("Startnumber");
+			startNumberInput.setText("1");
 			startNumberInput.setMaxWidth(50);
+
+			Label lblLeader = new Label("1");
+			Label lblStartnumberLeader = new Label();
+			Label lblStartnumber = new Label();
+			lblStartnumber.setStyle("-fx-font-size: 17");
+			Label lblNameLeader = new Label();
+			Label lblTimeLeader = new Label("0");
+			Label lblSign = new Label();
+			Label lblCurrentLeaderName = new Label();
+			Label lblCurrentLeaderTime = new Label();
+
+			Label lblChosenskier = new Label();
+			lblChosenskier.setText("Choose skier");
+			lblChosenskier.setMinWidth(150);
+			lblChosenskier.setStyle("-fx-font-size: 17");
+			Label lblTime = new Label();
+			lblTime.setStyle("-fx-font-size: 20");
 
 			// Knappar
 			Button btnAdd = new Button("Add skier");
 			btnAdd.setOnAction(e->{
-				myButton.add(table, obList, nameInput, startNumberInput);
+				controller.add(table, obList, nameInput, startNumberInput);
 			});
 
 			Button btnDelete = new Button("Delete skier");
 			btnDelete.setOnAction(e->{
-				myButton.delete(table, obList, startNumberInput);
+				controller.delete(table, obList, startNumberInput);
 			});
 
-			Button btnGoal = new Button("Finish");
-			btnGoal.setMinWidth(100);
-			btnGoal.setOnAction(e->{
-				myButton.goal(table, obList, timer.getTime());
+			Button btnSelect = new Button("Select skier");
+			btnSelect.setMinWidth(100);
+			btnSelect.setOnAction(e -> {
+				lblChosenskier.setText("");
+				lblStartnumber.setText("");
+				lblTimeSkier.setText("");
+
+				String parsedTime = controller.getParsedTime(split.getSelectedStartNumber(), selectedStart, timer.getTime());
+				split.split(table, obList, parsedTime);
+				parsedTime = controller.getParsedTime(split.getSelectedStartNumber(), selectedStart, timer.getTime());
+				split.split(table, obList, parsedTime);
+
+				lblChosenskier.setText(split.getSelectedName());
+				lblStartnumber.setText(String.valueOf(split.getSelectedStartNumber()));
+				lblTimeSkier.setText(parsedTime);
+
+
+
 			});
 
-			Button btnStartRace = new Button("Start race");
-			btnStartRace.setMinWidth(100);
+			Button btnFinish = new Button("Finish");
+			btnFinish.setMinWidth(100);
+			btnFinish.setOnAction(e->{
+			//	String parsedTime = controller.getParsedTime(timer.getTime());
+			//	controller.goal(table, obList, parsedTime);
+			});
+
 
 			Button btnSave = new Button("Save list");
 			btnSave.setMinWidth(100);
 			btnSave.setOnAction(e -> {
-				ArrayList<Skier> arrlist = new ArrayList<>(table.getItems());
+
 				Serialization serialization = new Serialization();
 				serialization.serialize((ArrayList<Skier>) arrList, "./skiers.xml");
 
 			});
 
+			Button btnStartRace = new Button("Start race");
+			btnStartRace.setMinWidth(100);
 			btnStartRace.setOnAction(e->{
 				if(!running) {
 					timer.start();
+					raceTimer = timer.getTime();
+
 					btnStartRace.setText("Stop race");
 					running = true;
 				}
@@ -120,9 +165,30 @@ public class MainGUI {
 				ObservableList<Skier> obList = FXCollections.observableList(arrList);
 				table.getItems().addAll(obList);
 			});
-			Button btnHunt = new Button("Hunt");
-			Button btnIndividual15 = new Button("Mass");
-			Button btnIndividual30 = new Button("30 sek");
+
+			Button btnSplit = new Button("Split");
+			btnSplit.setMinWidth(100);
+			btnSplit.setOnAction(e -> {
+
+		         String splitTime = split.getSplitTime(split.getSelectedStartNumber(), selectedStart, timer.getTime(), lblTimeLeader);
+
+		         split.compare(timer.getTime(), currentLeaderTime);
+
+				lblStartnumberLeader.setText(String.valueOf(split.getSelectedStartNumber()));
+				lblNameLeader.setText(split.getSelectedName());
+				lblSign.setText(split.getSign());
+				lblTimeLeader.setText(splitTime);
+
+			});
+
+
+			Button btnPursuit = new Button("Pursuit");
+			Button btnMass = new Button("Mass");
+			Button btnInd30 = new Button("30 sek");
+			btnInd30.setOnAction(e -> {
+				selectedStart = 30000;
+			});
+
 
 			// Labels
 			Label lblName = new Label("Name");
@@ -144,32 +210,24 @@ public class MainGUI {
 			GridPane.setConstraints(nameInput, 1, 1);
 			GridPane.setConstraints(startNumberInput, 1, 2);
 
-			// Add Skier
-			GridPane.setConstraints(btnAdd, 0, 3);
-
-			// Delete Skier
-			GridPane.setConstraints(btnDelete, 1, 3);
-
 			// Show leader
-			Label lblNrCurrentLeader = new Label();
+
+			lblNrCurrentLeader.setMinWidth(150);
 			lblNrCurrentLeader.setStyle("-fx-font-size: 20");
-			lblNrCurrentLeader.setText("Lucas Bauer");
-			GridPane.setConstraints(lblNrCurrentLeader, 0, 4);
+			//lblNrCurrentLeader.setText(split.getName());
+
 
 			// Show difference to leader
 
-			lblDifference.setStyle("-fx-font-size: 30");
-			lblDifference.setText("00:00.000");
-			GridPane.setConstraints(lblDifference, 0, 5);
+			lblTimeSkier.setStyle("-fx-font-size: 20");
+
+		//	GridPane.setConstraints(lblDifference, 0, 5);
 
 			// RaceSettings
 
 			Label lblTypeOfRace = new Label("Select type of start");
 
-			Label lblChosenskier = new Label("Gunde Svan");
-			lblChosenskier.setStyle("-fx-font-size: 20");
-			Label lblTime = new Label("00:00.000");
-			lblTime.setStyle("-fx-font-size: 30");
+
 			// Save result
 
 
@@ -179,36 +237,48 @@ public class MainGUI {
 			HBox hBox = new HBox();
 			hBox.setPadding(new Insets(10, 10, 10, 5));
 			hBox.setSpacing(20);
-			hBox.getChildren().addAll(btnStartRace, btnGoal);
+			hBox.getChildren().addAll(btnAdd, btnDelete, btnSelect);
 
 			HBox hBox2 = new HBox();
 			hBox2.setPadding(new Insets(10, 10, 10, 5));
 			hBox2.setSpacing(20);
-			hBox2.getChildren().addAll(btnHunt, btnIndividual15, btnIndividual30);
+			hBox2.getChildren().addAll(lblStartnumber, lblChosenskier, lblTimeSkier);
 
 			HBox hBox3 = new HBox();
 			hBox3.setPadding(new Insets(10, 10, 10, 5));
 			hBox3.setSpacing(20);
-			hBox3.getChildren().addAll(lblNrCurrentLeader, lblDifference);
-
-			HBox hBox6 = new HBox();
-			hBox6.setPadding(new Insets(10, 10, 10, 5));
-			hBox6.setSpacing(20);
-			hBox6.getChildren().addAll(lblChosenskier, lblTime);
+			hBox3.getChildren().addAll(lblStartnumberLeader,  lblNameLeader, lblSign, lblTimeLeader);
 
 			HBox hBox4 = new HBox();
 			hBox4.setPadding(new Insets(10, 10, 10, 5));
 			hBox4.setSpacing(20);
-			hBox4.getChildren().addAll(lblTypeOfRace);
+			hBox4.getChildren().addAll(lblLeader, lblCurrentLeaderName, lblCurrentLeaderTime);
 
 			HBox hBox5 = new HBox();
 			hBox5.setPadding(new Insets(10, 10, 10, 5));
 			hBox5.setSpacing(20);
-			hBox5.getChildren().addAll(btnAdd, btnDelete);
+			hBox5.getChildren().addAll(btnStartRace, btnSplit, btnFinish);
+
+			HBox hBox6 = new HBox();
+			hBox6.setPadding(new Insets(10, 10, 10, 5));
+			hBox6.setSpacing(20);
+			hBox6.getChildren().addAll(lblTypeOfRace);
+
+			HBox hBox7 = new HBox();
+			hBox7.setPadding(new Insets(10, 10, 10, 5));
+			hBox7.setSpacing(25);
+			hBox7.getChildren().addAll(btnPursuit, btnMass, btnInd30);
+
+			HBox hBox8 = new HBox();
+			hBox8.setPadding(new Insets(10, 10, 10, 5));
+			hBox8.setSpacing(20);
+			hBox8.getChildren().addAll(btnSave, btnGetList);
+
+
 
 			VBox vBox2 = new VBox();
 			vBox2.setPadding(new Insets(10, 10, 10,5));
-			vBox2.getChildren().addAll(hBox5, hBox3, hBox6, hBox, hBox4, hBox2);
+			vBox2.getChildren().addAll(hBox, hBox2, hBox3, hBox4, hBox5, hBox6, hBox7, hBox8);
 
 
 			vBoxRight.setPadding(new Insets(10, 10, 10,5));

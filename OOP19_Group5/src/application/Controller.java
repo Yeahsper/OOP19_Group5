@@ -1,13 +1,15 @@
 package application;
 
 import javafx.collections.ObservableList;
-import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 public class Controller {
 
-	//--Variables--
+    //--Variables--
 	private Skier selectedItem;
 	private String selectedName;
 	private int selectedStartNumber;
@@ -37,13 +39,14 @@ public class Controller {
 	}
 
 
-	public void goal(TableView<Skier> table, ObservableList<Skier> obList, Long time) {
+	public void goal(TableView<Skier> table, ObservableList<Skier> obList, String time) {
 		try {
 			this.selectedItem = table.getSelectionModel().getSelectedItem();
 			selectedName = table.getSelectionModel().getSelectedItem().getName();
 			selectedStartNumber = table.getSelectionModel().getSelectedItem().getStartNumber();
-			skier = new Skier(selectedName, selectedStartNumber, time);
 
+
+			skier = new Skier(selectedName, selectedStartNumber, time);
 			obList.addAll(skier);
 			table.setItems(obList);
 			table.getItems().remove(selectedItem);
@@ -77,4 +80,27 @@ public class Controller {
 
 		}
 	}//add
+
+	public String getParsedTime( int selectedStartNumber, long selectedStart, long raceTimer) {
+
+		long index = selectedStart * (selectedStartNumber - 1);
+		long skiersTime = raceTimer - index;
+
+		int tenthOfSeconds  = (int) (skiersTime / 100) % 10;
+		String strTenthOfSeconds = (String.format("%01d",tenthOfSeconds));
+
+		int seconds = (int) (skiersTime / 1000) % 60 ;
+		String strSeconds = (String.format("%02d", seconds));
+
+		int minutes = (int) ((skiersTime / (1000*60)) % 60);
+		String strMinutes = (String.format("%02d", minutes));
+
+		int hours   = (int) ((skiersTime / (1000*60*60)) % 24);
+		String strHours = (String.format("%02d", hours));
+
+
+		String parsedTime = strHours.concat(":").concat(strMinutes).concat(":").concat(strSeconds.concat(".").concat(strTenthOfSeconds));
+
+		return parsedTime;
+	}
 }//class

@@ -13,7 +13,7 @@ public class AniTimer extends AnimationTimer {
 	private long fraction;
 	private final Label labelTime;
 	private long time;
-	private SimpleDateFormat timeFormat = new SimpleDateFormat("mm:ss:SSS");
+	private SimpleDateFormat timeFormat = new SimpleDateFormat("mm:ss.SSS");
 
 	
 	//--Constructors--
@@ -95,6 +95,7 @@ public class AniTimer extends AnimationTimer {
 	public long getTime() {
 		return time;
 	}
+	
 
 	public void setTimeFormat(SimpleDateFormat timeFormat) {
 		this.timeFormat = timeFormat;
