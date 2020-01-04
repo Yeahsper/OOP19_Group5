@@ -1,63 +1,33 @@
 package application;
 
 import javafx.collections.ObservableList;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-
+/**
+ * Class that handles all the JavaFX buttons
+ * @author Jesper
+ *
+ */
 public class Controller {
 
-    //--Variables--
+	//--Variables--
 	private Skier selectedItem;
 	private String selectedName;
 	private int selectedStartNumber;
-	Skier skier;
-	int startInt = 1;
+	private Skier skier;
+	private int startInt = 1;
+	private AniTimer timer;
+	private Split split = new Split();
+	
 	//--Constructors
 	public Controller() {
 
 	}
 
 	//--Methods--
-	public void delete(TableView<Skier> table, ObservableList<Skier> obList, TextField startNumberField) {
-		try {
-			this.selectedItem = table.getSelectionModel().getSelectedItem();
-			selectedStartNumber = table.getSelectionModel().getSelectedItem().getStartNumber();
-			if(!(startInt <= 1)) {
-				startInt--;
-			}
-			startNumberField.setText(""+selectedStartNumber);
-		}catch(NullPointerException e) {
-			System.out.println("You didnt choose an item in the table view");
-		}
-
-		table.getItems().remove(selectedItem);
-
-
-	}
-
-
-	public void goal(TableView<Skier> table, ObservableList<Skier> obList, String time) {
-		try {
-			this.selectedItem = table.getSelectionModel().getSelectedItem();
-			selectedName = table.getSelectionModel().getSelectedItem().getName();
-			selectedStartNumber = table.getSelectionModel().getSelectedItem().getStartNumber();
-
-
-			skier = new Skier(selectedName, selectedStartNumber, time);
-			obList.addAll(skier);
-			table.setItems(obList);
-			table.getItems().remove(selectedItem);
-			table.refresh();
-		}catch(NullPointerException e) {
-			System.out.println("You didn't choose an item in the tableview");
-		}
-
-
-	}
-
+	
 	public void add(TableView<Skier> table, ObservableList<Skier> obList, TextField textName, TextField textStartNumber) {
 		Skier skier;
 
@@ -80,6 +50,41 @@ public class Controller {
 
 		}
 	}//add
+	
+	public void delete(TableView<Skier> table, ObservableList<Skier> obList, TextField startNumberField) {
+		try {
+			this.selectedItem = table.getSelectionModel().getSelectedItem();
+			selectedStartNumber = table.getSelectionModel().getSelectedItem().getStartNumber();
+			if(!(startInt <= 1)) {
+				startInt--;
+			}
+			startNumberField.setText(""+selectedStartNumber);
+		}catch(NullPointerException e) {
+			System.out.println("You didnt choose an item in the table view");
+		}
+
+		table.getItems().remove(selectedItem);
+	}//delete
+
+
+	public void goal(TableView<Skier> table, ObservableList<Skier> obList, String time) {
+		try {
+			this.selectedItem = table.getSelectionModel().getSelectedItem();
+			selectedName = table.getSelectionModel().getSelectedItem().getName();
+			selectedStartNumber = table.getSelectionModel().getSelectedItem().getStartNumber();
+
+
+			skier = new Skier(selectedName, selectedStartNumber, time);
+			obList.addAll(skier);
+			table.setItems(obList);
+			table.getItems().remove(selectedItem);
+			table.refresh();
+		}catch(NullPointerException e) {
+			System.out.println("You didn't choose an item in the tableview");
+		}
+	}//goal
+
+
 
 	public String getParsedTime( int selectedStartNumber, long selectedStart, long raceTimer) {
 
@@ -102,5 +107,65 @@ public class Controller {
 		String parsedTime = strHours.concat(":").concat(strMinutes).concat(":").concat(strSeconds.concat(".").concat(strTenthOfSeconds));
 
 		return parsedTime;
-	}
+	}//getParsedTime
+
+	
+
+	public void select(TableView<Skier> table, ObservableList<Skier> obList, Label lblSelectedStartNr, Label lblSelectedName, Label lblSign, Label lblDifferenceToLeader, long selectedStart, int selectedStartNumber, long time) {
+		lblSelectedStartNr.setText("");
+		lblSelectedName.setText("");
+		lblSign.setText("");
+		lblDifferenceToLeader.setText("");
+
+		String parsedTime = getParsedTime(selectedStartNumber, selectedStart, time);
+		split.split(table, obList, parsedTime);
+
+		lblSelectedStartNr.setText(Integer.toString(split.getSelectedStartNumber()));
+		lblSelectedName.setText(split.getSelectedName());
+	}//select
+	
+	public void split(TableView<Skier> table, ObservableList<Skier> obList, Label lblLeader, Label lblNameLeader, Label lblBestTime, Label lblSelectedStartNr, Label lblSelectedName, Label lblSign, Label lblDifferenceToLeader, long selectedStart, int selectedStartNumber, long time) {
+		lblSelectedStartNr.setText("");
+		lblSelectedName.setText("");
+		lblSign.setText("");
+		lblDifferenceToLeader.setText("");
+		lblLeader.setText("");
+		lblNameLeader.setText("");
+		lblBestTime.setText("");
+		
+		System.out.println(selectedStart);
+		
+		split.calculateSkiersTime(time, selectedStart, selectedStartNumber);
+		split.compare(split.getSkiersTime(), split.getBestTime());
+		String parsedTime = getParsedTime(selectedStartNumber, selectedStart, time);
+		goal(table, obList, parsedTime);
+
+		// Update hBox4 if no skier has passed
+		if (split.getSkiersPassed() == 1) {
+			split.setSkiersPassed(2);
+			lblLeader.setText("Leader");
+			lblNameLeader.setText(split.getStrNameLeader());
+			lblBestTime.setText(split.getStrTimeLeader());
+		}
+
+		// Update hBox3 if skier doesn't have the best time so far
+		if (split.getBestTime() < split.getSkiersTime()) {
+			lblSelectedStartNr.setText(String.valueOf(selectedStartNumber));
+			lblSelectedName.setText(split.getSelectedName());
+			lblSign.setText(split.getSign());
+			lblDifferenceToLeader.setText(split.getStrDifference());
+		}
+
+		// Update hBox3 and 4 if skier has the best time
+		else {
+			lblSelectedStartNr.setText(String.valueOf(selectedStartNumber));
+			lblSelectedName.setText(split.getSelectedName());
+			lblSign.setText(split.getSign());
+			lblDifferenceToLeader.setText(split.getStrDifference());
+			lblLeader.setText("Leader");
+			lblNameLeader.setText(split.getStrNameLeader());
+			lblBestTime.setText(split.getStrBestTime());
+		}
+	}//split
+	
 }//class
