@@ -6,6 +6,9 @@
     <void property="fullName">
      <string>Ove Ovesson</string>
     </void>
+    <void property="parsedTime">
+     <string>00:00:13.1</string>
+    </void>
     <void property="startNumber">
      <int>1</int>
     </void>
@@ -16,6 +19,9 @@
     <void property="fullName">
      <string>Sven Svensson</string>
     </void>
+    <void property="parsedTime">
+     <string>00:00:14.0</string>
+    </void>
     <void property="startNumber">
      <int>2</int>
     </void>
@@ -25,6 +31,9 @@
    <object class="application.Skier">
     <void property="fullName">
      <string>Anatoli Blyat</string>
+    </void>
+    <void property="parsedTime">
+     <string>00:00:15.3</string>
     </void>
     <void property="startNumber">
      <int>3</int>

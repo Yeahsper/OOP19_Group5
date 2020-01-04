@@ -30,18 +30,21 @@ public class Controller {
 	
 	public void add(TableView<Skier> table, ObservableList<Skier> obList, TextField textName, TextField textStartNumber) {
 		Skier skier;
-
+		String startNumberString = textStartNumber.getText();
+		int startNumber = Integer.parseInt(startNumberString);
 		if((textName.getText().trim().isEmpty())) {
 			MyAlert.showInfo("The \"name\" field is empty");
 		}else {
 			if(selectedStartNumber > 0) {
 				skier = new Skier(textName.getText(), selectedStartNumber);
 				selectedStartNumber = 0;
+				textStartNumber.setText((startInt+1)+"");
 			}else{
-				skier = new Skier(textName.getText(), startInt);
+				skier = new Skier(textName.getText(), startNumber);
+				textStartNumber.setText((startNumber+1)+"");
 			}
 
-			textStartNumber.setText((startInt+1)+"");
+			
 			obList.addAll(skier);
 			table.setItems(obList);
 			table.refresh();
