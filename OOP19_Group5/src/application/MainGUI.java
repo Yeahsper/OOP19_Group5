@@ -29,7 +29,7 @@ import javafx.stage.Stage;
 
 /**
  * GUI for the application
- * @author Yeahs
+ * @author Jesper
  *
  */
 public class MainGUI implements Runnable {
@@ -183,11 +183,13 @@ public class MainGUI implements Runnable {
 
 				// Add
 				btnAdd.setOnAction(e->{
+					if(!running)
 					controller.add(table, obList, nameInput, startNumberInput);
 				});
 
 				// Delete
 				btnDelete.setOnAction(e->{
+					if(!running)
 					controller.delete(table, obList, startNumberInput);
 				});
 
@@ -232,33 +234,41 @@ public class MainGUI implements Runnable {
 
 				// Save list
 				btnSaveList.setOnAction(e -> {
-					serialization.serialize((ArrayList<Skier>) arrList, "./skiers.xml");
+					if(!running)
+						serialization.serialize((ArrayList<Skier>) arrList, "./skiers.xml");
 				});
 
 
 				// Get list
 				btnGetList.setOnAction(e -> {
-					arrList = serialization.deserialize((ArrayList<Skier>) arrList, "./Skiers.xml");
-					table.getItems().removeAll(obList);
-					obList = FXCollections.observableList(arrList);
-					table.getItems().addAll(obList);
+
+					if(!running) {
+						arrList = serialization.deserialize((ArrayList<Skier>) arrList, "./Skiers.xml");
+						table.getItems().removeAll(obList);
+						obList = FXCollections.observableList(arrList);
+						table.getItems().addAll(obList);
+					}
 				});
 
 
 
 				// 30 sec individual start
 				btnInd30.setOnAction(e -> { // TODO: Start individual racetimer, one for each skier
-					selectedStart = 30000;
-					btnInd30.setStyle("-fx-background-color: #ff93ae;");
-					btnMass.setStyle(null);
-					//	Thread thread = new Thread(new Counter());
-					//	thread.start();
+					if(!running) {
+						selectedStart = 30000;
+						btnInd30.setStyle("-fx-background-color: #ff93ae;");
+						btnMass.setStyle(null);
+						//	Thread thread = new Thread(new Counter());
+						//	thread.start();
+					}
 				});
 
 				btnMass.setOnAction(e -> {
-					selectedStart = 0;
-					btnMass.setStyle("-fx-background-color: #ff93ae;");
-					btnInd30.setStyle(null);
+					if(!running) {
+						selectedStart = 0;
+						btnMass.setStyle("-fx-background-color: #ff93ae;");
+						btnInd30.setStyle(null);
+					}
 				});
 
 
@@ -341,14 +351,14 @@ public class MainGUI implements Runnable {
 
 
 				//Server-Client stuff
-				
-				
+
+
 				try {
 					ip = InetAddress.getByName("localhost");
 				} catch (UnknownHostException e1) {
 					e1.printStackTrace();
 				}
-				
+
 				/**
 				 *Tries to connect to a ServerSocket by creating a
 				 *socket and connecting by the inparameters in socket(ip-adress, ServerPort).
@@ -386,7 +396,7 @@ public class MainGUI implements Runnable {
 									});
 								} catch (IOException e) { 
 									e.printStackTrace(); 
-									
+
 								} 
 							}
 						} 
@@ -406,7 +416,7 @@ public class MainGUI implements Runnable {
 	public static String getChosenSkier() {
 		return chosenSkier;
 	}
-	
-	
+
+
 
 }//class
