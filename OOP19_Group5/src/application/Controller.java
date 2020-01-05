@@ -28,6 +28,13 @@ public class Controller {
 
 	//--Methods--
 	
+	/**
+	 * Method to add new Skiers.
+	 * @param table Which Tableview to use.
+	 * @param obList Which ObservableList to use.
+	 * @param textName Which TextField to use for the name.
+	 * @param textStartNumber Which TextField to use for the starting number.
+	 */
 	public void add(TableView<Skier> table, ObservableList<Skier> obList, TextField textName, TextField textStartNumber) {
 		Skier skier;
 		String startNumberString = textStartNumber.getText();
@@ -54,6 +61,12 @@ public class Controller {
 		}
 	}//add
 	
+	/**
+	 * Method to delete a user. As long as the startnumber !<= 1, then also decrease that with 1.
+	 * @param table Which Tableview to use.
+	 * @param obList Which ObservableList to use.
+	 * @param startNumberField Which TextField to use for the starting number.
+	 */
 	public void delete(TableView<Skier> table, ObservableList<Skier> obList, TextField startNumberField) {
 		try {
 			this.selectedItem = table.getSelectionModel().getSelectedItem();
@@ -70,6 +83,12 @@ public class Controller {
 	}//delete
 
 
+	/**
+	 * Method to run whenever a Skier reaches the goal.
+	 * @param table Which Tableview to use.
+	 * @param obList Which ObservableList to use.
+	 * @param time Which time to use to set skiers time.
+	 */
 	public void goal(TableView<Skier> table, ObservableList<Skier> obList, String time) {
 		try {
 			this.selectedItem = table.getSelectionModel().getSelectedItem();
@@ -89,6 +108,13 @@ public class Controller {
 
 
 
+	/**
+	 * Method that parses the time from a Long to a String
+	 * @param selectedStartNumber Used to know which Skier to change.
+	 * @param selectedStart Used to know what timing-system to use (Mass-start or Individual start)
+	 * @param raceTimer TOMAS FILL THIS ONE IN, I DUNNO! HELP! :)
+	 * @return the parsed time as String.
+	 */
 	public String getParsedTime( int selectedStartNumber, long selectedStart, long raceTimer) {
 
 		long index = selectedStart * (selectedStartNumber - 1);
@@ -113,7 +139,19 @@ public class Controller {
 	}//getParsedTime
 
 	
-
+	/**
+	 * Method to select a Skier in the TableView. Yepp, a lot of params is needed here, honestly screw this method.
+	 * TOMAS FILL THIS IN FOR ME PLEASE, THANKS! :)
+	 * @param table
+	 * @param obList
+	 * @param lblSelectedStartNr
+	 * @param lblSelectedName
+	 * @param lblSign
+	 * @param lblDifferenceToLeader
+	 * @param selectedStart
+	 * @param selectedStartNumber
+	 * @param time
+	 */
 	public void select(TableView<Skier> table, ObservableList<Skier> obList, Label lblSelectedStartNr, Label lblSelectedName, Label lblSign, Label lblDifferenceToLeader, long selectedStart, int selectedStartNumber, long time) {
 		lblSelectedStartNr.setText("");
 		lblSelectedName.setText("");
@@ -127,6 +165,21 @@ public class Controller {
 		lblSelectedName.setText(split.getSelectedName());
 	}//select
 	
+	/**
+	 * Yepp, this one aswell Tomas, thanks! :)
+	 * @param table
+	 * @param obList
+	 * @param lblLeader
+	 * @param lblNameLeader
+	 * @param lblBestTime
+	 * @param lblSelectedStartNr
+	 * @param lblSelectedName
+	 * @param lblSign
+	 * @param lblDifferenceToLeader
+	 * @param selectedStart
+	 * @param selectedStartNumber
+	 * @param time
+	 */
 	public void split(TableView<Skier> table, ObservableList<Skier> obList, Label lblLeader, Label lblNameLeader, Label lblBestTime, Label lblSelectedStartNr, Label lblSelectedName, Label lblSign, Label lblDifferenceToLeader, long selectedStart, int selectedStartNumber, long time) {
 		lblSelectedStartNr.setText("");
 		lblSelectedName.setText("");

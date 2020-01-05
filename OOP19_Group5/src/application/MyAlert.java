@@ -20,7 +20,7 @@ public class MyAlert {
 
     /**
      * Shows an alertbox.
-     * @param string
+     * @param string What message to show.
      */
     public static void showWarning(String string) {
         Alert alert = new Alert(AlertType.WARNING);
@@ -28,6 +28,10 @@ public class MyAlert {
         alert.show();
     }
 
+    /**
+     * Shows an infobox.
+     * @param string What message to show.
+     */
     public static void showInfo(String string) {
         alert = new Alert(AlertType.NONE);
         alert.setTitle("Stop your ski!");

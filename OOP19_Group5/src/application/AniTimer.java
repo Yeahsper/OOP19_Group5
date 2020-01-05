@@ -46,7 +46,12 @@ public class AniTimer extends AnimationTimer {
 		fraction = System.currentTimeMillis() - timestamp;
 	}//stop
 
-	//Handles how often the timer updates and updates the label and formats it
+	/**
+	 * Handles how often the timer updates and updates the label and formats it.
+	 * No need to understand the code 100%, as im not sure how it works with the timing etc.
+	 * The only thing that is NOT necessary in this code is the last two lines of code, that is just used to update
+	 * the label and have nothing to do with the timer itself.
+	 */
 	@Override
 	public void handle(long now) {
         long newTime = System.currentTimeMillis();

@@ -67,6 +67,11 @@ public class MainGUI implements Runnable {
 	public MainGUI() {
 	}
 
+	/**
+	 * Method that starts up a separate thread to send a message to the connected Server/socket.
+	 * @param output Which DataOutputStream to send through
+	 * @param string What String you want to send through the DataoutputStream
+	 */
 	public void sendMessage(DataOutputStream output, String string) {
 		Thread sendMessage = new Thread(new Runnable() { 
 			@Override
@@ -87,12 +92,11 @@ public class MainGUI implements Runnable {
 		sendMessage.start();
 	}//sendMessage
 
-	/** Display shows the graphical interface presented to the user **/
+	/**
+	 * Starts through Main.java when we start up a new Thread, because it implements Runnable.
+	 * Pretty much everything here is the graphical user interface.
+	 */
 	public void run() {
-
-
-
-
 
 		//Need to use Platform.runLater because of JavaFX threads.
 		Platform.runLater(() -> {
@@ -332,18 +336,28 @@ public class MainGUI implements Runnable {
 
 
 				//Server-Client stuff
+				
+				
 				try {
 					ip = InetAddress.getByName("localhost");
 				} catch (UnknownHostException e1) {
 					e1.printStackTrace();
 				}
 				
-
+				/**
+				 *Tries to connect to a ServerSocket by creating a
+				 *socket and connecting by the inparameters in socket(ip-adress, ServerPort).
+				 *If successful, it starts up the readMessage() methods which is separate threads and reads messages from clients.
+				 */
 				try {
 					socket = new Socket(ip, ServerPort);
 					input = new DataInputStream(socket.getInputStream()); 
 					output = new DataOutputStream(socket.getOutputStream());
 
+					/**
+					 * Method that starts up a separate thread to read a message from the server you are connected to.
+					 * @param input Which DataInputStream you want to read from.
+					 */
 					Thread readMessage = new Thread(new Runnable() { 
 						@Override
 						public void run() { 
@@ -355,6 +369,7 @@ public class MainGUI implements Runnable {
 									System.out.println(msg); 
 									Platform.runLater(() -> {
 
+										//What these two if-statements does is pretty much the same as pressing the buttons in the interface.
 										if(msg.equalsIgnoreCase("Finish")) {
 											parsedTime = controller.getParsedTime(split.getSelectedStartNumber(), selectedStart, timer.getTime());
 											controller.goal(table, obList, parsedTime);
