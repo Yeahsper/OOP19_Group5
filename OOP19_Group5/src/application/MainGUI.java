@@ -27,6 +27,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+/**
+ * GUI for the application
+ * @author Yeahs
+ *
+ */
 public class MainGUI implements Runnable {
 
 	// --Objects--
