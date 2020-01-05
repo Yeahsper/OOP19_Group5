@@ -1,6 +1,7 @@
 package application;
 
 import javafx.collections.ObservableList;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -223,5 +224,24 @@ public class Controller {
 			lblBestTime.setText(split.getStrBestTime());
 		}
 	}//split
+	
+	/**
+	 * Enables or disables JavaFX buttons.
+	 * @param btnAdd
+	 * @param btnDelete
+	 * @param btnSaveList
+	 * @param btnGetList
+	 * @param btnInd30
+	 * @param btnMass
+	 * @param bool
+	 */
+	public void activeButtons(Button btnAdd, Button btnDelete, Button btnSaveList, Button btnGetList, Button btnInd30, Button btnMass, boolean bool) {
+		btnAdd.setDisable(bool);
+		btnDelete.setDisable(bool);
+		btnSaveList.setDisable(bool);
+		btnGetList.setDisable(bool);
+		btnInd30.setDisable(bool);
+		btnMass.setDisable(bool);
+	}
 	
 }//class

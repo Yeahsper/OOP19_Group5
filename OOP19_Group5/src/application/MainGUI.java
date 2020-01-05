@@ -183,13 +183,11 @@ public class MainGUI implements Runnable {
 
 				// Add
 				btnAdd.setOnAction(e->{
-					if(!running)
 					controller.add(table, obList, nameInput, startNumberInput);
 				});
 
 				// Delete
 				btnDelete.setOnAction(e->{
-					if(!running)
 					controller.delete(table, obList, startNumberInput);
 				});
 
@@ -210,6 +208,9 @@ public class MainGUI implements Runnable {
 						btnStartRace.setText("Stop race");
 						running = true;
 						sendMessage(output, "TimerStart");
+						controller.activeButtons(btnAdd, btnDelete, btnSaveList, btnGetList, btnInd30, btnMass, true);
+
+
 					}
 					else {
 						timer.stop();
@@ -217,6 +218,7 @@ public class MainGUI implements Runnable {
 						btnStartRace.setText("Start race");
 						running = false;
 						sendMessage(output, "TimerStop");
+						controller.activeButtons(btnAdd, btnDelete, btnSaveList, btnGetList, btnInd30, btnMass, false);
 					}
 				});
 
@@ -234,44 +236,37 @@ public class MainGUI implements Runnable {
 
 				// Save list
 				btnSaveList.setOnAction(e -> {
-					if(!running)
-						serialization.serialize((ArrayList<Skier>) arrList, "./skiers.xml");
+					serialization.serialize((ArrayList<Skier>) arrList, "./skiers.xml");
 				});
 
 
 				// Get list
 				btnGetList.setOnAction(e -> {
 
-					if(!running) {
-						arrList = serialization.deserialize((ArrayList<Skier>) arrList, "./Skiers.xml");
-						table.getItems().removeAll(obList);
-						obList = FXCollections.observableList(arrList);
-						table.getItems().addAll(obList);
-					}
+					arrList = serialization.deserialize((ArrayList<Skier>) arrList, "./Skiers.xml");
+					table.getItems().removeAll(obList);
+					obList = FXCollections.observableList(arrList);
+					table.getItems().addAll(obList);
 				});
 
 
 
 				// 30 sec individual start
 				btnInd30.setOnAction(e -> { // TODO: Start individual racetimer, one for each skier
-					if(!running) {
-						selectedStart = 30000;
-						btnInd30.setStyle("-fx-background-color: #ff93ae;");
-						btnMass.setStyle(null);
-						//	Thread thread = new Thread(new Counter());
-						//	thread.start();
-					}
+					selectedStart = 30000;
+					btnInd30.setStyle("-fx-background-color: #ff93ae;");
+					btnMass.setStyle(null);
+					//	Thread thread = new Thread(new Counter());
+					//	thread.start();
 				});
 
 				btnMass.setOnAction(e -> {
-					if(!running) {
-						selectedStart = 0;
-						btnMass.setStyle("-fx-background-color: #ff93ae;");
-						btnInd30.setStyle(null);
-					}
+					selectedStart = 0;
+					btnMass.setStyle("-fx-background-color: #ff93ae;");
+					btnInd30.setStyle(null);
 				});
 
-
+				btnPursuit.setDisable(true);
 
 				// --Layout GUI--
 				BorderPane root = new BorderPane();
@@ -413,6 +408,9 @@ public class MainGUI implements Runnable {
 		});
 	}//run();
 
+	
+	
+	//--Getters and Setters--
 	public static String getChosenSkier() {
 		return chosenSkier;
 	}
