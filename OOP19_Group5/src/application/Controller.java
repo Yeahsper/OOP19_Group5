@@ -154,16 +154,18 @@ public class Controller {
 	 * @param time
 	 */
 	public void select(TableView<Skier> table, ObservableList<Skier> obList, Label lblSelectedStartNr, Label lblSelectedName, Label lblSign, Label lblDifferenceToLeader, long selectedStart, int selectedStartNumber, long time) {
-		lblSelectedStartNr.setText("");
-		lblSelectedName.setText("");
-		lblSign.setText("");
-		lblDifferenceToLeader.setText("");
+        lblSelectedStartNr.setText("");
+        lblSelectedName.setText("");
+        lblSign.setText("");
+        lblDifferenceToLeader.setText("");
+        setSelectedStartNumber(selectedStartNumber);
 
-		String parsedTime = getParsedTime(selectedStartNumber, selectedStart, time);
-		split.split(table, obList, parsedTime);
+        String parsedTime = getParsedTime(selectedStartNumber, selectedStart, time);
+        split.split(table, obList, parsedTime, selectedStartNumber);
 
-		lblSelectedStartNr.setText(Integer.toString(split.getSelectedStartNumber()));
-		lblSelectedName.setText(split.getSelectedName());
+
+        lblSelectedStartNr.setText(Integer.toString(selectedStartNumber));
+        lblSelectedName.setText(split.getSelectedName());
 	}//select
 	
 	/**
@@ -182,48 +184,64 @@ public class Controller {
 	 * @param time
 	 */
 	public void split(TableView<Skier> table, ObservableList<Skier> obList, Label lblLeader, Label lblNameLeader, Label lblBestTime, Label lblSelectedStartNr, Label lblSelectedName, Label lblSign, Label lblDifferenceToLeader, long selectedStart, int selectedStartNumber, long time) {
-		lblSelectedStartNr.setText("");
-		lblSelectedName.setText("");
-		lblSign.setText("");
-		lblDifferenceToLeader.setText("");
-		lblLeader.setText("");
-		lblNameLeader.setText("");
-		lblBestTime.setText("");
-		
-		System.out.println(selectedStart);
-		
-		split.calculateSkiersTime(time, selectedStart, selectedStartNumber);
-		split.compare(split.getSkiersTime(), split.getBestTime());
-		String parsedTime = getParsedTime(selectedStartNumber, selectedStart, time);
-		goal(table, obList, parsedTime);
+		 /**       lblSelectedStartNr.setText("");
+        lblSelectedName.setText("");
+        lblSign.setText("");
+        lblDifferenceToLeader.setText("");
+        lblLeader.setText("");
+        lblNameLeader.setText("");
+        lblBestTime.setText("");
+**/
+        split.calculateSkiersTime(time, selectedStart, selectedStartNumber);
+        split.compare(split.getSkiersTime(), split.getBestTime());
+        String parsedTime = getParsedTime(selectedStartNumber, selectedStart, time);
+        goal(table, obList, parsedTime);
 
-		// Update hBox4 if no skier has passed
-		if (split.getSkiersPassed() == 1) {
-			split.setSkiersPassed(2);
-			lblLeader.setText("Leader");
-			lblNameLeader.setText(split.getStrNameLeader());
-			lblBestTime.setText(split.getStrTimeLeader());
-		}
+        System.out.println("--------------");
+        System.out.println("-----första åkaren-----");
+        System.out.println("--------------");
+        System.out.println("SkiersPassed: " + split.getSkiersPassed());
 
-		// Update hBox3 if skier doesn't have the best time so far
-		if (split.getBestTime() < split.getSkiersTime()) {
-			lblSelectedStartNr.setText(String.valueOf(selectedStartNumber));
-			lblSelectedName.setText(split.getSelectedName());
-			lblSign.setText(split.getSign());
-			lblDifferenceToLeader.setText(split.getStrDifference());
-		}
+        // Update hBox4 if no skier has passed
+        if (split.getSkiersPassed() == 1) {
+            System.out.println("--------------");
+            System.out.println("-----uppdatera box4, första åkaren-----");
+            lblSign.setText(split.getSign());
+            lblLeader.setText("Leader");
+            lblNameLeader.setText(split.getStrNameLeader());
+            lblBestTime.setText(split.getStrTimeLeader());
+            split.setSkiersPassed(2);
+        }
 
-		// Update hBox3 and 4 if skier has the best time
-		else {
-			lblSelectedStartNr.setText(String.valueOf(selectedStartNumber));
-			lblSelectedName.setText(split.getSelectedName());
-			lblSign.setText(split.getSign());
-			lblDifferenceToLeader.setText(split.getStrDifference());
-			lblLeader.setText("Leader");
-			lblNameLeader.setText(split.getStrNameLeader());
-			lblBestTime.setText(split.getStrBestTime());
-		}
-	}//split
+        // Update hBox3 if skier doesn't have the best time so far
+        if (split.getBestTime() < split.getSkiersTime()) {
+            System.out.println("--------------");
+            System.out.println("-----uppdatera box3, inte bäst tid-----");
+            lblSelectedStartNr.setText(String.valueOf(selectedStartNumber));
+            lblSelectedName.setText(split.getSelectedName());
+            lblSign.setText("+");
+            lblDifferenceToLeader.setText(split.getStrDifference());
+            System.out.println("startnr: " + split.getselectedStartNumber());
+            System.out.println("Namn: " + split.getSelectedName());
+            System.out.println("Sign: " + split.getSign());
+            System.out.println("Difference: " + split.getStrDifference());
+        }
+
+        // Update hBox3 and 4 if skier has the best time
+        else {
+            System.out.println("--------------");
+            System.out.println("-----uppdatera box3 och 4, bäst tid-----");
+            lblSelectedStartNr.setText(String.valueOf(selectedStartNumber));
+            lblSelectedName.setText(split.getSelectedName());
+            lblSign.setText("-");
+            lblDifferenceToLeader.setText(split.getStrDifference());
+            lblLeader.setText("Leader");
+            lblNameLeader.setText(split.getStrNameLeader());
+            lblBestTime.setText(split.getStrBestTime());
+        }
+    }//split
+
+
 	
 	/**
 	 * Enables or disables JavaFX buttons.
@@ -242,6 +260,10 @@ public class Controller {
 		btnGetList.setDisable(bool);
 		btnInd30.setDisable(bool);
 		btnMass.setDisable(bool);
-	}
+	}//activeButtons
 	
+	
+    // Getter and setters
+    private void setSelectedStartNumber(int selectedStartNumber) { this.selectedStartNumber = selectedStartNumber; }
+    public int getSelectedStartNumber() { return selectedStartNumber; }
 }//class

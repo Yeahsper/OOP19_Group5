@@ -191,7 +191,7 @@ public class MainGUI implements Runnable {
 				// Select
 				btnSelect.setOnAction(e -> {
 					controller.select(table, obList, lblSelectedStartNr, lblSelectedName, lblSign,
-							lblDifferenceToLeader, selectedStart, split.getSelectedStartNumber(), timer.getTime());
+							lblDifferenceToLeader, selectedStart, table.getSelectionModel().getSelectedItem().getStartNumber(), timer.getTime());
 					chosenSkier = lblSelectedName.getText();
 					System.out.println(chosenSkier);
 					sendMessage(output,"SelectedSkier");
@@ -222,12 +222,12 @@ public class MainGUI implements Runnable {
 				// Split
 				btnSplit.setOnAction(e -> {
 					controller.split(table, obList, lblLeader, lblNameLeader, lblBestTime, lblSelectedStartNr, lblSelectedName,
-							lblSign, lblDifferenceToLeader, selectedStart, split.getSelectedStartNumber(), timer.getTime());
+							lblSign, lblDifferenceToLeader, selectedStart, controller.getSelectedStartNumber(), timer.getTime());
 				});
 
 				// Finish
 				btnFinish.setOnAction(e->{
-					parsedTime = controller.getParsedTime(split.getSelectedStartNumber(), selectedStart, timer.getTime());
+					parsedTime = controller.getParsedTime(controller.getSelectedStartNumber(), selectedStart, timer.getTime());
 					controller.goal(table, obList, parsedTime);
 				});
 
@@ -378,12 +378,12 @@ public class MainGUI implements Runnable {
 
 										//What these two if-statements does is pretty much the same as pressing the buttons in the interface.
 										if(msg.equalsIgnoreCase("Finish")) {
-											parsedTime = controller.getParsedTime(split.getSelectedStartNumber(), selectedStart, timer.getTime());
+											parsedTime = controller.getParsedTime(controller.getSelectedStartNumber(), selectedStart, timer.getTime());
 											controller.goal(table, obList, parsedTime);
 										}
 										if(msg.equalsIgnoreCase("Split")) {
 											controller.split(table, obList, lblLeader, lblNameLeader, lblBestTime, lblSelectedStartNr, lblSelectedName,
-													lblSign, lblDifferenceToLeader, selectedStart, split.getSelectedStartNumber(), timer.getTime());
+													lblSign, lblDifferenceToLeader, selectedStart, controller.getSelectedStartNumber(), timer.getTime());
 										}
 									});
 								} catch (IOException e) { 

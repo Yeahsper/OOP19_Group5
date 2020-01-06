@@ -9,8 +9,8 @@ import javafx.scene.control.TableView;
  *
  */
 public class Split {
-	
-	//--Variables--
+
+    //--Variables--
     private long timeLeader;
     private long difference;
     private long index;
@@ -18,7 +18,7 @@ public class Split {
     private long skiersTime;
 
     private int selectedStartNumber;
-    private int skiersPassed = 0;
+    private int skiersPassed;
 
     private String strSkiersTime;
     private String strTimeLeader;
@@ -30,28 +30,30 @@ public class Split {
     private String selectedName;
     private String minus = "minus";
     private String plus = "plus";
+    private String none =" ";
+    private String dsq = "DSQ";
     Skier skier;
 
     // Constructors
     public Split () {
     }
 
-    
+
     // --Methods--
-    
+
     /**
      * Gets a split time from the selected object in a TableView.
      * @param table
      * @param obList
      * @param time
      */
-    public void split(TableView<Skier> table, ObservableList<Skier> obList, String time) {
+    public void split(TableView<Skier> table, ObservableList<Skier> obList, String time, int selectedStartnumber) {
         try {
             this.selectedItem = table.getSelectionModel().getSelectedItem();
             selectedName = table.getSelectionModel().getSelectedItem().getName();
-            selectedStartNumber = table.getSelectionModel().getSelectedItem().getStartNumber();
-
+            this.selectedStartNumber = selectedStartnumber;
             skier = new Skier(selectedName, selectedStartNumber, time);
+            this.sign = " ";
 
         }catch(NullPointerException e) {
             System.out.println("You didn't choose an item in the tableview");
@@ -60,11 +62,11 @@ public class Split {
 
 
 
-   /**
-    * Takes the difference between the current best time
+    /**
+     * Takes the difference between the current best time
      * and the chosen skier. Saves the result as a string
-    * @param difference
-    */
+     * @param difference
+     */
     private void setStrDifference(long difference){
 
         strDifference = "";
@@ -103,7 +105,7 @@ public class Split {
     }
 
     /**
-     * Saves the current best time as a string 
+     * Saves the current best time as a string
      * @param skiersTime
      */
     private void setStrBestTime(long skiersTime) {
@@ -128,7 +130,7 @@ public class Split {
 
         if(seconds > 0) {
             strSeconds = (String.format("%02d", seconds));
-           strBestTime = strSeconds.concat(".").concat(strTenthOfSeconds);
+            strBestTime = strSeconds.concat(".").concat(strTenthOfSeconds);
         }
 
         if(minutes > 0) {
@@ -163,11 +165,14 @@ public class Split {
         long skiersTime = time - index;
 
         setSkiersTime(skiersTime);
+        if (skiersTime < 0) skiersTime = skiersTime * (-1);
 
         if (skiersPassed == 0) {
             setBestTime(skiersTime);
             setSkiersPassed(1);
         }
+
+
 
         int tenthOfSeconds  = (int) (skiersTime / 100) % 10;
         int seconds = (int) (skiersTime / 1000) % 60 ;
@@ -177,7 +182,7 @@ public class Split {
         if(tenthOfSeconds > 0) {
             strTenthOfSeconds = (String.format("%01d", tenthOfSeconds));
             strSkiersTime = strTenthOfSeconds;
-         }
+        }
 
         if(seconds > 0) {
             strSeconds = (String.format("%02d", seconds));
@@ -194,6 +199,7 @@ public class Split {
             strSkiersTime = strHours.concat(":").concat(strMinutes).concat(":").concat(strSeconds.concat(".").concat(strTenthOfSeconds));
         }
         setStrSkiersTime(strSkiersTime);
+
     }
 
     /**
@@ -203,81 +209,92 @@ public class Split {
      */
     public void compare(long skiersTime, long bestTime) {
 
+        if (skiersTime < bestTime && skiersTime > 0) { // If skier has the best time
+            System.out.println("I första if");
+            System.out.println("SkierTime = " + getSkiersTime() + ", bestTime = " + getBestTime() + " och skiersPassed = " + getSkiersPassed());
+            setSign(minus);
+            setNameLeader(selectedName);
+            setBestTime(skiersTime);
+            setStrBestTime(skiersTime);
+            setDifference(skiersTime, bestTime);
+            setStrDifference(getDifference());
+            System.out.println("Sign = " + getSign());
+            System.out.println("strDifference = " + getStrDifference());
+            setTimeLeader(skiersTime);
+        }
+
         if (getSkiersPassed() == 1){ // if skier is the first one to pass
+            System.out.println("I andra if");
+            System.out.println("SkiersPassed = " + getSkiersPassed());
             setNameLeader(selectedName);
             setBestTime(skiersTime);
             setStrBestTime(skiersTime);
             setDifference(skiersTime, bestTime);
             setStrDifference(getDifference());
             setTimeLeader(skiersTime);
+            setSign(none);
+
         }
-            if (skiersTime < bestTime) { // If skier has the best time
-                setSign(minus);
-                setNameLeader(selectedName);
-                setBestTime(skiersTime);
-                setStrBestTime(skiersTime);
-                setDifference(skiersTime, bestTime);
-                setStrDifference(getDifference());
-                setTimeLeader(skiersTime);
-            }
-            else {
-                setSign(plus);
-                setDifference(skiersTime, bestTime);
-                setStrDifference(getDifference());
-            }
+        else {
+            System.out.println("I else: ");
+            System.out.println("SkierTime = " + getSkiersTime() + ", bestTime = " + getBestTime() + " och skiersPassed = " + getSkiersPassed());
+            setSign(plus);
+            setDifference(skiersTime, bestTime);
+            setStrDifference(getDifference());
         }
+    }
 
-        //TODO: Show individual timer when chosen skier
- /**   public String showSkiersTime(long time, long selectedStart, int selectedStartNumber) {
+    //TODO: Show individual timer when chosen skier
+    /**   public String showSkiersTime(long time, long selectedStart, int selectedStartNumber) {
 
-        strSkiersTime = "";
-        String strTenthOfSeconds = "";
-        String strSeconds = "";
-        String strMinutes = "";
-        String strHours = "";
+     strSkiersTime = "";
+     String strTenthOfSeconds = "";
+     String strSeconds = "";
+     String strMinutes = "";
+     String strHours = "";
 
-        long index = selectedStart * (selectedStartNumber - 1);
-        long skiersTime = time - index;
+     long index = selectedStart * (selectedStartNumber - 1);
+     long skiersTime = time - index;
 
-        setSkiersTime(skiersTime);
+     setSkiersTime(skiersTime);
 
-        if (skiersPassed == 0) {
-            setBestTime(skiersTime);
-            setSkiersPassed(1);
-        }
+     if (skiersPassed == 0) {
+     setBestTime(skiersTime);
+     setSkiersPassed(1);
+     }
 
-        int tenthOfSeconds  = (int) (skiersTime / 100) % 10;
-        int seconds = (int) (skiersTime / 1000) % 60 ;
-        int minutes = (int) ((skiersTime / (1000*60)) % 60);
-        int hours   = (int) ((skiersTime / (1000*60*60)) % 24);
+     int tenthOfSeconds  = (int) (skiersTime / 100) % 10;
+     int seconds = (int) (skiersTime / 1000) % 60 ;
+     int minutes = (int) ((skiersTime / (1000*60)) % 60);
+     int hours   = (int) ((skiersTime / (1000*60*60)) % 24);
 
-        if(tenthOfSeconds > 0) {
-            strTenthOfSeconds = (String.format("%01d", tenthOfSeconds));
-            strSkiersTime = strTenthOfSeconds;
-        }
+     if(tenthOfSeconds > 0) {
+     strTenthOfSeconds = (String.format("%01d", tenthOfSeconds));
+     strSkiersTime = strTenthOfSeconds;
+     }
 
-        if(seconds > 0) {
-            strSeconds = (String.format("%02d", seconds));
-            strSkiersTime = strSeconds.concat(".").concat(strTenthOfSeconds);
-        }
+     if(seconds > 0) {
+     strSeconds = (String.format("%02d", seconds));
+     strSkiersTime = strSeconds.concat(".").concat(strTenthOfSeconds);
+     }
 
-        if(minutes > 0) {
-            strMinutes = (String.format("%02d", minutes));
-            strSkiersTime = (strMinutes).concat(":").concat(strSeconds.concat(".").concat(strTenthOfSeconds));
-        }
+     if(minutes > 0) {
+     strMinutes = (String.format("%02d", minutes));
+     strSkiersTime = (strMinutes).concat(":").concat(strSeconds.concat(".").concat(strTenthOfSeconds));
+     }
 
-        if(hours > 0) {
-            strHours = (String.format("%02d", hours));
-            strSkiersTime = strHours.concat(":").concat(strMinutes).concat(":").concat(strSeconds.concat(".").concat(strTenthOfSeconds));
-        }
-       // setStrSkiersTime(strSkiersTime);
-        return strSkiersTime;
-    } **/
-    
+     if(hours > 0) {
+     strHours = (String.format("%02d", hours));
+     strSkiersTime = strHours.concat(":").concat(strMinutes).concat(":").concat(strSeconds.concat(".").concat(strTenthOfSeconds));
+     }
+     // setStrSkiersTime(strSkiersTime);
+     return strSkiersTime;
+     } **/
+
     // --Getters--
     public String getSelectedName (){ return selectedName; }
 
-    public int getSelectedStartNumber () { return selectedStartNumber; }
+    public int getselectedStartNumber () { return selectedStartNumber; }
 
     public long getBestTime() { return bestTime; }
 
@@ -297,10 +314,7 @@ public class Split {
 
     public String getStrDifference() { return strDifference; }
 
-    public int getSkiersPassed() {
-        if (skiersPassed == 0) { return 0; }
-        else { return 1; }
-    }
+    public int getSkiersPassed() {return skiersPassed; }
 
 
     // --Setters--
@@ -319,14 +333,14 @@ public class Split {
 
     private void setTimeLeader(long timeLeader) { this.timeLeader = timeLeader; }
 
-    void setSkiersPassed(int i) { this.skiersPassed = i; }
+    void setSkiersPassed(int i) { skiersPassed = i; }
 
     private void setStrTimeLeader(String strBestTime) { this.strTimeLeader = strBestTime; }
 
     private void setDifference(long skiersTime, long bestTime) {
         if (skiersTime < bestTime)
-        	difference = bestTime - skiersTime;
+            difference = bestTime - skiersTime;
         else
-        	difference = skiersTime - bestTime;
+            difference = skiersTime - bestTime;
     }
 } // Class
