@@ -81,17 +81,14 @@ public class MainGUI implements Runnable {
 		Thread sendMessage = new Thread(new Runnable() { 
 			@Override
 			public void run() { 
-				boolean tempBool = true;
 				while (true) { 
-					while(tempBool) {
-						try { 
-							output.writeUTF(string); 
-						} catch (IOException e) { 
-							e.printStackTrace(); 
-						} 
-						tempBool = false;
-					}
-				} 
+					try { 
+						output.writeUTF(string); 
+						break;
+					} catch (IOException e) { 
+						e.printStackTrace(); 
+					} 
+				}
 			} 
 		}); 
 		sendMessage.start();
@@ -408,8 +405,8 @@ public class MainGUI implements Runnable {
 		});
 	}//run();
 
-	
-	
+
+
 	//--Getters and Setters--
 	public static String getChosenSkier() {
 		return chosenSkier;

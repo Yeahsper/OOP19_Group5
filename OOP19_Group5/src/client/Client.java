@@ -37,9 +37,9 @@ public class Client extends Application{
 	private AniTimer timer = new AniTimer(lblTime);
 	DataInputStream input = null;
 	DataOutputStream output = null;
-	
+
 	//--Methods--
-	
+
 	/**
 	 * This methods starts from launch(args) from the main() method, must have because extends javafx.Application.
 	 */
@@ -47,7 +47,7 @@ public class Client extends Application{
 	public void start(Stage primaryStage) throws IOException {
 
 		//--Buttons and Actions--
-		
+
 		/**
 		 *When you click on the button, it tries to connect to a ServerSocket by creating a
 		 *socket and connecting by the inparameters in socket(ip-adress, ServerPort).
@@ -76,7 +76,7 @@ public class Client extends Application{
 				} 
 			}
 		});
-		
+
 		Button btnSplit = new Button("Split");
 		btnSplit.setOnAction(e ->{
 			if(connected) {
@@ -85,7 +85,7 @@ public class Client extends Application{
 				MyAlert.showInfo("You are not connected");
 			}
 		});
-		
+
 		Button btnFinish = new Button("Finish");
 		btnFinish.setOnAction(e->{
 			if(connected) {
@@ -99,19 +99,19 @@ public class Client extends Application{
 		// --GUI--
 		lblTime.setStyle("-fx-font-size: 25");
 		lblSkier.setStyle("-fx-font-size: 17");
-		
+
 		//BorderPanes
 		BorderPane borderPane = new BorderPane();
 		BorderPane borderPane2 = new BorderPane();
-		
+
 		borderPane2.setLeft(btnSplit);
 		borderPane2.setRight(btnFinish);
-		
+
 		borderPane.setTop(btnConnect);
 		borderPane.setRight(lblTime);
 		borderPane.setLeft(lblSkier);
 		borderPane.setBottom(borderPane2);
-		
+
 		//Scenes and stage
 		Scene scene = new Scene(borderPane);
 		primaryStage.setScene(scene);
@@ -131,22 +131,23 @@ public class Client extends Application{
 		Thread sendMessage = new Thread(new Runnable() { 
 			@Override
 			public void run() { 
-				boolean tempBool = true;
 				while (true) { 
-					while(tempBool) {
-						try { 
-							output.writeUTF(string); 
-						} catch (IOException e) { 
-							e.printStackTrace(); 
-						} 
-						tempBool = false;
-					}
-				} 
+					try { 
+						output.writeUTF(string);
+						break;
+					} catch (IOException e) { 
+						e.printStackTrace(); 
+					} 
+				}
 			} 
 		}); 
 		sendMessage.start();
+		//Debugging only
+		//System.out.println(sendMessage.getName());
+		//System.out.println(Thread.getAllStackTraces());
+
 	}//sendMessage
-	
+
 	/**
 	 * Method that starts up a separate thread to read a message from the server you are connected to.
 	 * @param input Which DataInputStream you want to read from.
@@ -174,10 +175,10 @@ public class Client extends Application{
 								//I had to the if-statement like this to work, I tried using !() and !msg.contains but neither did work.
 								//This is to make sure so you don't update the label with anything else besides the skiers names.
 								if(msg.contains("Split") || msg.contains("Finish")) {
-									
+
 								}else
 									lblSkier.setText(msg);
-								
+
 							}
 
 						});
@@ -192,7 +193,7 @@ public class Client extends Application{
 		}); 
 		readMessage.start(); 
 	}//readMessage
-	
+
 	/**
 	 * Main method.
 	 * @param args
@@ -202,6 +203,6 @@ public class Client extends Application{
 	}//main
 
 
-	
-	
+
+
 }//class
