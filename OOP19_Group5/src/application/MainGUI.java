@@ -362,7 +362,7 @@ public class MainGUI implements Runnable {
 					output = new DataOutputStream(socket.getOutputStream());
 
 					/**
-					 * Method that starts up a separate thread to read a message from the server you are connected to.
+					 * Starts up a separate thread to read a message from the server you are connected to.
 					 * @param input Which DataInputStream you want to read from.
 					 */
 					Thread readMessage = new Thread(new Runnable() { 
