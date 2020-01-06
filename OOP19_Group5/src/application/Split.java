@@ -31,7 +31,7 @@ public class Split {
     private String minus = "minus";
     private String plus = "plus";
     private String none =" ";
-    private String dsq = "DSQ";
+
     Skier skier;
 
     // Constructors
@@ -165,14 +165,12 @@ public class Split {
         long skiersTime = time - index;
 
         setSkiersTime(skiersTime);
-        if (skiersTime < 0) skiersTime = skiersTime * (-1);
+        if (skiersTime < 0) skiersTime = skiersTime * (-1); // Avoids division by zero
 
         if (skiersPassed == 0) {
             setBestTime(skiersTime);
             setSkiersPassed(1);
         }
-
-
 
         int tenthOfSeconds  = (int) (skiersTime / 100) % 10;
         int seconds = (int) (skiersTime / 1000) % 60 ;
@@ -210,22 +208,15 @@ public class Split {
     public void compare(long skiersTime, long bestTime) {
 
         if (skiersTime < bestTime && skiersTime > 0) { // If skier has the best time
-            System.out.println("I första if");
-            System.out.println("SkierTime = " + getSkiersTime() + ", bestTime = " + getBestTime() + " och skiersPassed = " + getSkiersPassed());
-            setSign(minus);
             setNameLeader(selectedName);
             setBestTime(skiersTime);
             setStrBestTime(skiersTime);
             setDifference(skiersTime, bestTime);
             setStrDifference(getDifference());
-            System.out.println("Sign = " + getSign());
-            System.out.println("strDifference = " + getStrDifference());
             setTimeLeader(skiersTime);
         }
 
         if (getSkiersPassed() == 1){ // if skier is the first one to pass
-            System.out.println("I andra if");
-            System.out.println("SkiersPassed = " + getSkiersPassed());
             setNameLeader(selectedName);
             setBestTime(skiersTime);
             setStrBestTime(skiersTime);
@@ -236,9 +227,6 @@ public class Split {
 
         }
         else {
-            System.out.println("I else: ");
-            System.out.println("SkierTime = " + getSkiersTime() + ", bestTime = " + getBestTime() + " och skiersPassed = " + getSkiersPassed());
-            setSign(plus);
             setDifference(skiersTime, bestTime);
             setStrDifference(getDifference());
         }

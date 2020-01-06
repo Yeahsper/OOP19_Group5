@@ -13,7 +13,7 @@ import javafx.scene.control.TextField;
  */
 public class Controller {
 
-	//--Variables--
+    //--Variables--
 	private Skier selectedItem;
 	private String selectedName;
 	private int selectedStartNumber;
@@ -113,7 +113,8 @@ public class Controller {
 	 * Method that parses the time from a Long to a String
 	 * @param selectedStartNumber Used to know which Skier to change.
 	 * @param selectedStart Used to know what timing-system to use (Mass-start or Individual start)
-	 * @param raceTimer TOMAS FILL THIS ONE IN, I DUNNO! HELP! :)
+	 * @param raceTimer Used to calculate the chosen skiers individual time. raceTimer starts when
+	 *                  the user click "Start race" and stop when the user click "Stop race"
 	 * @return the parsed time as String.
 	 */
 	public String getParsedTime( int selectedStartNumber, long selectedStart, long raceTimer) {
@@ -141,17 +142,17 @@ public class Controller {
 
 	
 	/**
-	 * Method to select a Skier in the TableView. Yepp, a lot of params is needed here, honestly screw this method.
-	 * TOMAS FILL THIS IN FOR ME PLEASE, THANKS! :)
-	 * @param table
-	 * @param obList
-	 * @param lblSelectedStartNr
-	 * @param lblSelectedName
-	 * @param lblSign
-	 * @param lblDifferenceToLeader
-	 * @param selectedStart
-	 * @param selectedStartNumber
-	 * @param time
+	 * Method to select a Skier in the TableView.
+	 * All lbl(Labels) are used by MainGUI to present information about the selected skier
+	 * @param table TableView that holds information about each skier such as name and startnumber.
+	 * @param obList Used to get the necessary information about the skier you´ve chosen
+	 * @param lblSelectedStartNr Used to show the chosen skiers startnumber
+	 * @param lblSelectedName Used to show the name of the skier
+	 * @param lblSign Shows whether the skier is ahead (-) or behind (+) the current fastest time
+	 * @param lblDifferenceToLeader Shows the difference in time to the current fastest time.
+	 * @param selectedStart Used when calculate the skiers individual time. If type of start is individual30, selectedStart = 30000ms otherwise 0
+	 * @param selectedStartNumber Skiers startnumber.
+	 * @param time Total racetime.
 	 */
 	public void select(TableView<Skier> table, ObservableList<Skier> obList, Label lblSelectedStartNr, Label lblSelectedName, Label lblSign, Label lblDifferenceToLeader, long selectedStart, int selectedStartNumber, long time) {
         lblSelectedStartNr.setText("");
@@ -169,43 +170,29 @@ public class Controller {
 	}//select
 	
 	/**
-	 * Yepp, this one aswell Tomas, thanks! :)
-	 * @param table
-	 * @param obList
-	 * @param lblLeader
-	 * @param lblNameLeader
-	 * @param lblBestTime
-	 * @param lblSelectedStartNr
-	 * @param lblSelectedName
-	 * @param lblSign
-	 * @param lblDifferenceToLeader
-	 * @param selectedStart
-	 * @param selectedStartNumber
-	 * @param time
+	 * Split calculates the split-time for the chosen skier and presents the result to the user in MainGUI.
+	 * @param table TableView that holds information about each skier such as name and startnumber.
+	 * @param obList Used to get the necessary information about the skier you´ve chosen
+	 * @param lblLeader Just prints out the text "Leader"
+	 * @param lblNameLeader Name of current leader
+	 * @param lblBestTime Shows current best time
+	 * @param lblSelectedStartNr Startnumber of the chosen skier
+	 * @param lblSelectedName Name of chosen skier
+	 * @param lblSign Shows whether the skier is ahead (-) or behind (+) the current fastest time
+	 * @param lblDifferenceToLeader Shows the difference in time to the current fastest time.
+	 * @param selectedStart Equals 30000 if individual start is chosen, otherwise 0
+	 * @param selectedStartNumber Holds the startnumber of the selected skier
+	 * @param time Total racetime
 	 */
 	public void split(TableView<Skier> table, ObservableList<Skier> obList, Label lblLeader, Label lblNameLeader, Label lblBestTime, Label lblSelectedStartNr, Label lblSelectedName, Label lblSign, Label lblDifferenceToLeader, long selectedStart, int selectedStartNumber, long time) {
-		 /**       lblSelectedStartNr.setText("");
-        lblSelectedName.setText("");
-        lblSign.setText("");
-        lblDifferenceToLeader.setText("");
-        lblLeader.setText("");
-        lblNameLeader.setText("");
-        lblBestTime.setText("");
-**/
+
         split.calculateSkiersTime(time, selectedStart, selectedStartNumber);
         split.compare(split.getSkiersTime(), split.getBestTime());
         String parsedTime = getParsedTime(selectedStartNumber, selectedStart, time);
         goal(table, obList, parsedTime);
 
-        System.out.println("--------------");
-        System.out.println("-----första åkaren-----");
-        System.out.println("--------------");
-        System.out.println("SkiersPassed: " + split.getSkiersPassed());
-
         // Update hBox4 if no skier has passed
         if (split.getSkiersPassed() == 1) {
-            System.out.println("--------------");
-            System.out.println("-----uppdatera box4, första åkaren-----");
             lblSign.setText(split.getSign());
             lblLeader.setText("Leader");
             lblNameLeader.setText(split.getStrNameLeader());
@@ -215,22 +202,14 @@ public class Controller {
 
         // Update hBox3 if skier doesn't have the best time so far
         if (split.getBestTime() < split.getSkiersTime()) {
-            System.out.println("--------------");
-            System.out.println("-----uppdatera box3, inte bäst tid-----");
             lblSelectedStartNr.setText(String.valueOf(selectedStartNumber));
             lblSelectedName.setText(split.getSelectedName());
             lblSign.setText("+");
             lblDifferenceToLeader.setText(split.getStrDifference());
-            System.out.println("startnr: " + split.getselectedStartNumber());
-            System.out.println("Namn: " + split.getSelectedName());
-            System.out.println("Sign: " + split.getSign());
-            System.out.println("Difference: " + split.getStrDifference());
-        }
+         }
 
         // Update hBox3 and 4 if skier has the best time
         else {
-            System.out.println("--------------");
-            System.out.println("-----uppdatera box3 och 4, bäst tid-----");
             lblSelectedStartNr.setText(String.valueOf(selectedStartNumber));
             lblSelectedName.setText(split.getSelectedName());
             lblSign.setText("-");
