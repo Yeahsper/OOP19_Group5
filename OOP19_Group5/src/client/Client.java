@@ -113,7 +113,7 @@ public class Client extends Application{
 		borderPane.setBottom(borderPane2);
 
 		//Scenes and stage
-		Scene scene = new Scene(borderPane);
+		Scene scene = new Scene(borderPane, 250, 100);
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("Russian EPOGenerator");
 		primaryStage.setResizable(false);

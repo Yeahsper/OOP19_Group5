@@ -190,8 +190,12 @@ public class MainGUI implements Runnable {
 
 				// Select
 				btnSelect.setOnAction(e -> {
+					try {
 					controller.select(table, obList, lblSelectedStartNr, lblSelectedName, lblSign,
 							lblDifferenceToLeader, selectedStart, table.getSelectionModel().getSelectedItem().getStartNumber(), timer.getTime());
+					}catch(NullPointerException e2) {
+						System.out.println("You didn't choose an item in the TableView");
+					}
 					chosenSkier = lblSelectedName.getText();
 					System.out.println(chosenSkier);
 					sendMessage(output,"SelectedSkier");
@@ -205,7 +209,7 @@ public class MainGUI implements Runnable {
 						btnStartRace.setText("Stop race");
 						running = true;
 						sendMessage(output, "TimerStart");
-						controller.activeButtons(btnAdd, btnDelete, btnSaveList, btnGetList, btnInd30, btnMass, true);
+						controller.activeButtons(btnAdd, btnDelete, btnSaveList, btnGetList, btnInd30, btnMass, btnPursuit, true);
 
 
 					}
@@ -215,7 +219,7 @@ public class MainGUI implements Runnable {
 						btnStartRace.setText("Start race");
 						running = false;
 						sendMessage(output, "TimerStop");
-						controller.activeButtons(btnAdd, btnDelete, btnSaveList, btnGetList, btnInd30, btnMass, false);
+						controller.activeButtons(btnAdd, btnDelete, btnSaveList, btnGetList, btnInd30, btnMass, btnPursuit, false);
 					}
 				});
 
@@ -233,7 +237,7 @@ public class MainGUI implements Runnable {
 
 				// Save list
 				btnSaveList.setOnAction(e -> {
-					serialization.serialize((ArrayList<Skier>) arrList, "./skiers.xml");
+					serialization.serialize((ArrayList<Skier>) arrList, "./Skiers.xml");
 				});
 
 
@@ -253,6 +257,7 @@ public class MainGUI implements Runnable {
 					selectedStart = 30000;
 					btnInd30.setStyle("-fx-background-color: #ff93ae;");
 					btnMass.setStyle(null);
+					btnPursuit.setStyle(null);
 					//	Thread thread = new Thread(new Counter());
 					//	thread.start();
 				});
@@ -261,9 +266,15 @@ public class MainGUI implements Runnable {
 					selectedStart = 0;
 					btnMass.setStyle("-fx-background-color: #ff93ae;");
 					btnInd30.setStyle(null);
+					btnPursuit.setStyle(null);
 				});
 
-				btnPursuit.setDisable(true);
+				btnPursuit.setOnAction(e->{
+					selectedStart = 0;
+					btnPursuit.setStyle("-fx-background-color: #ff93ae;");
+					btnMass.setStyle(null);
+					btnInd30.setStyle(null);
+				});
 
 				// --Layout GUI--
 				BorderPane root = new BorderPane();
@@ -343,8 +354,7 @@ public class MainGUI implements Runnable {
 
 
 				//Server-Client stuff
-
-
+				//Change "localhost" to ip-address you want to connect to.
 				try {
 					ip = InetAddress.getByName("localhost");
 				} catch (UnknownHostException e1) {

@@ -75,6 +75,7 @@ public class Split {
         String strMinutes = "";
         String strHours = "";
 
+        //To avoid division by 0.
         if (difference < 0)
             difference = difference * (-1);
 
@@ -115,6 +116,7 @@ public class Split {
         String strMinutes = "";
         String strHours = "";
 
+        //To avoid division by 0.
         if (skiersTime < 0)
             skiersTime = skiersTime * (-1);
 
@@ -165,7 +167,8 @@ public class Split {
         long skiersTime = time - index;
 
         setSkiersTime(skiersTime);
-        if (skiersTime < 0) skiersTime = skiersTime * (-1); // Avoids division by zero
+        if (skiersTime < 0)
+        	skiersTime = skiersTime * (-1); // Avoids division by zero
 
         if (skiersPassed == 0) {
             setBestTime(skiersTime);

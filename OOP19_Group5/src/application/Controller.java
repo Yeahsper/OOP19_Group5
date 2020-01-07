@@ -232,13 +232,14 @@ public class Controller {
 	 * @param btnMass
 	 * @param bool
 	 */
-	public void activeButtons(Button btnAdd, Button btnDelete, Button btnSaveList, Button btnGetList, Button btnInd30, Button btnMass, boolean bool) {
+	public void activeButtons(Button btnAdd, Button btnDelete, Button btnSaveList, Button btnGetList, Button btnInd30, Button btnMass, Button btnPursuit, boolean bool) {
 		btnAdd.setDisable(bool);
 		btnDelete.setDisable(bool);
 		btnSaveList.setDisable(bool);
 		btnGetList.setDisable(bool);
 		btnInd30.setDisable(bool);
 		btnMass.setDisable(bool);
+		btnPursuit.setDisable(bool);
 	}//activeButtons
 	
 	

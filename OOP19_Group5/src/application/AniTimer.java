@@ -55,7 +55,7 @@ public class AniTimer extends AnimationTimer {
 	@Override
 	public void handle(long now) {
         long newTime = System.currentTimeMillis();
-        if (timestamp <= newTime) {
+        if (timestamp<= newTime) {
             long deltaT = (newTime - timestamp);
             time += deltaT;
             timestamp +=  deltaT;
