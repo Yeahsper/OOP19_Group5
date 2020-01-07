@@ -13,7 +13,7 @@ import javafx.scene.control.TextField;
  */
 public class Controller {
 
-    //--Variables--
+	//--Variables--
 	private Skier selectedItem;
 	private String selectedName;
 	private int selectedStartNumber;
@@ -21,14 +21,14 @@ public class Controller {
 	private int startInt = 1;
 	private AniTimer timer;
 	private Split split = new Split();
-	
+
 	//--Constructors
 	public Controller() {
 
 	}
 
 	//--Methods--
-	
+
 	/**
 	 * Method to add new Skiers.
 	 * @param table Which Tableview to use.
@@ -39,29 +39,36 @@ public class Controller {
 	public void add(TableView<Skier> table, ObservableList<Skier> obList, TextField textName, TextField textStartNumber) {
 		Skier skier;
 		String startNumberString = textStartNumber.getText();
-		int startNumber = Integer.parseInt(startNumberString);
-		if((textName.getText().trim().isEmpty())) {
-			MyAlert.showInfo("The \"name\" field is empty");
-		}else {
-			if(selectedStartNumber > 0) {
-				skier = new Skier(textName.getText(), selectedStartNumber);
-				selectedStartNumber = 0;
-				textStartNumber.setText((startInt+1)+"");
-			}else{
-				skier = new Skier(textName.getText(), startNumber);
-				textStartNumber.setText((startNumber+1)+"");
+		try {
+			int startNumber = Integer.parseInt(startNumberString);
+
+			if((textName.getText().trim().isEmpty())) {
+				MyAlert.showInfo("The \"name\" field is empty");
+			}else {
+				if(selectedStartNumber > 0) {
+					skier = new Skier(textName.getText(), selectedStartNumber);
+					selectedStartNumber = 0;
+					textStartNumber.setText((startInt+1)+"");
+				}else{
+					skier = new Skier(textName.getText(), startNumber);
+					textStartNumber.setText((startNumber+1)+"");
+				}
+
+
+
+
+				obList.addAll(skier);
+				table.setItems(obList);
+				table.refresh();
+				textName.clear();
+				startInt++;
+
 			}
-
-			
-			obList.addAll(skier);
-			table.setItems(obList);
-			table.refresh();
-			textName.clear();
-			startInt++;
-
+		}catch(NumberFormatException e) {
+			MyAlert.showInfo("Please only use integers (1-999) in the startnumber");
 		}
 	}//add
-	
+
 	/**
 	 * Method to delete a user. As long as the startnumber !<= 1, then also decrease that with 1.
 	 * @param table Which Tableview to use.
@@ -140,7 +147,7 @@ public class Controller {
 		return parsedTime;
 	}//getParsedTime
 
-	
+
 	/**
 	 * Method to select a Skier in the TableView.
 	 * All lbl(Labels) are used by MainGUI to present information about the selected skier
@@ -155,20 +162,20 @@ public class Controller {
 	 * @param time Total racetime.
 	 */
 	public void select(TableView<Skier> table, ObservableList<Skier> obList, Label lblSelectedStartNr, Label lblSelectedName, Label lblSign, Label lblDifferenceToLeader, long selectedStart, int selectedStartNumber, long time) {
-        lblSelectedStartNr.setText("");
-        lblSelectedName.setText("");
-        lblSign.setText("");
-        lblDifferenceToLeader.setText("");
-        setSelectedStartNumber(selectedStartNumber);
+		lblSelectedStartNr.setText("");
+		lblSelectedName.setText("");
+		lblSign.setText("");
+		lblDifferenceToLeader.setText("");
+		setSelectedStartNumber(selectedStartNumber);
 
-        String parsedTime = getParsedTime(selectedStartNumber, selectedStart, time);
-        split.split(table, obList, parsedTime, selectedStartNumber);
+		String parsedTime = getParsedTime(selectedStartNumber, selectedStart, time);
+		split.split(table, obList, parsedTime, selectedStartNumber);
 
 
-        lblSelectedStartNr.setText(Integer.toString(selectedStartNumber));
-        lblSelectedName.setText(split.getSelectedName());
+		lblSelectedStartNr.setText(Integer.toString(selectedStartNumber));
+		lblSelectedName.setText(split.getSelectedName());
 	}//select
-	
+
 	/**
 	 * Split calculates the split-time for the chosen skier and presents the result to the user in MainGUI.
 	 * @param table TableView that holds information about each skier such as name and startnumber.
@@ -186,42 +193,42 @@ public class Controller {
 	 */
 	public void split(TableView<Skier> table, ObservableList<Skier> obList, Label lblLeader, Label lblNameLeader, Label lblBestTime, Label lblSelectedStartNr, Label lblSelectedName, Label lblSign, Label lblDifferenceToLeader, long selectedStart, int selectedStartNumber, long time) {
 
-        split.calculateSkiersTime(time, selectedStart, selectedStartNumber);
-        split.compare(split.getSkiersTime(), split.getBestTime());
-        String parsedTime = getParsedTime(selectedStartNumber, selectedStart, time);
-        goal(table, obList, parsedTime);
+		split.calculateSkiersTime(time, selectedStart, selectedStartNumber);
+		split.compare(split.getSkiersTime(), split.getBestTime());
+		String parsedTime = getParsedTime(selectedStartNumber, selectedStart, time);
+		goal(table, obList, parsedTime);
 
-        // Update hBox4 if no skier has passed
-        if (split.getSkiersPassed() == 1) {
-            lblSign.setText(split.getSign());
-            lblLeader.setText("Leader");
-            lblNameLeader.setText(split.getStrNameLeader());
-            lblBestTime.setText(split.getStrTimeLeader());
-            split.setSkiersPassed(2);
-        }
+		// Update hBox4 if no skier has passed
+		if (split.getSkiersPassed() == 1) {
+			lblSign.setText(split.getSign());
+			lblLeader.setText("Leader");
+			lblNameLeader.setText(split.getStrNameLeader());
+			lblBestTime.setText(split.getStrTimeLeader());
+			split.setSkiersPassed(2);
+		}
 
-        // Update hBox3 if skier doesn't have the best time so far
-        if (split.getBestTime() < split.getSkiersTime()) {
-            lblSelectedStartNr.setText(String.valueOf(selectedStartNumber));
-            lblSelectedName.setText(split.getSelectedName());
-            lblSign.setText("+");
-            lblDifferenceToLeader.setText(split.getStrDifference());
-         }
+		// Update hBox3 if skier doesn't have the best time so far
+		if (split.getBestTime() < split.getSkiersTime()) {
+			lblSelectedStartNr.setText(String.valueOf(selectedStartNumber));
+			lblSelectedName.setText(split.getSelectedName());
+			lblSign.setText("+");
+			lblDifferenceToLeader.setText(split.getStrDifference());
+		}
 
-        // Update hBox3 and 4 if skier has the best time
-        else {
-            lblSelectedStartNr.setText(String.valueOf(selectedStartNumber));
-            lblSelectedName.setText(split.getSelectedName());
-            lblSign.setText("-");
-            lblDifferenceToLeader.setText(split.getStrDifference());
-            lblLeader.setText("Leader");
-            lblNameLeader.setText(split.getStrNameLeader());
-            lblBestTime.setText(split.getStrBestTime());
-        }
-    }//split
+		// Update hBox3 and 4 if skier has the best time
+		else {
+			lblSelectedStartNr.setText(String.valueOf(selectedStartNumber));
+			lblSelectedName.setText(split.getSelectedName());
+			lblSign.setText("-");
+			lblDifferenceToLeader.setText(split.getStrDifference());
+			lblLeader.setText("Leader");
+			lblNameLeader.setText(split.getStrNameLeader());
+			lblBestTime.setText(split.getStrBestTime());
+		}
+	}//split
 
 
-	
+
 	/**
 	 * Enables or disables JavaFX buttons.
 	 * @param btnAdd
@@ -241,9 +248,9 @@ public class Controller {
 		btnMass.setDisable(bool);
 		btnPursuit.setDisable(bool);
 	}//activeButtons
-	
-	
-    // Getter and setters
-    private void setSelectedStartNumber(int selectedStartNumber) { this.selectedStartNumber = selectedStartNumber; }
-    public int getSelectedStartNumber() { return selectedStartNumber; }
+
+
+	// Getter and setters
+	private void setSelectedStartNumber(int selectedStartNumber) { this.selectedStartNumber = selectedStartNumber; }
+	public int getSelectedStartNumber() { return selectedStartNumber; }
 }//class
